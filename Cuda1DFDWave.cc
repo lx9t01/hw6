@@ -197,7 +197,10 @@ int main(int argc, char* argv[]) {
         /* TODO: Apply left and right boundary conditions on the GPU. 
         The right boundary conditon will be 0 at the last position
         for all times t */
+        float right_boundary_value = 0.0;
         cudaMemcpy(dev_new_data, &left_boundary_value, 1*sizeof(float), cudaMemcpyHostToDevice);
+        cudaMemcpy(dev_new_data + numberOfTimesteps, &right_boundary_value, 1*sizeof(float), cudaMemcpyHostToDevice);
+
         float* temp = dev_old_data;
         dev_old_data = dev_cur_data;
         dev_cur_data = dev_new_data;
