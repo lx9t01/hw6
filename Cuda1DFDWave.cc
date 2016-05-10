@@ -160,7 +160,15 @@ int main(int argc, char* argv[]) {
 
     /* TODO: Create GPU memory for your calculations. 
     As an initial condition at time 0, zero out your memory as well. */
-    
+    float* dev_old_data;
+    float* dev_cur_data;
+    float* dev_new_data;
+    cudaMalloc((void**)&dev_old_data, sizeof(float)*numberOfNodes);
+    cudaMalloc((void**)&dev_cur_data, sizeof(float)*numberOfNodes);
+    cudaMalloc((void**)&dev_new_data, sizeof(float)*numberOfNodes);
+    cudaMemset(dev_old_data, 0, sizeof(float)*numberOfNodes);
+    cudaMemset(dev_cur_data, 0, sizeof(float)*numberOfNodes);
+    cudaMemset(dev_new_data, 0, sizeof(float)*numberOfNodes);
     
     // Looping through all times t = 0, ..., t_max
     for (size_t timestepIndex = 0; timestepIndex < numberOfTimesteps;
@@ -174,7 +182,7 @@ int main(int argc, char* argv[]) {
         
         /* TODO: Call a kernel to solve the problem (you'll need to make
         the kernel in the .cu file) */
-
+        cudaCallWaveKernel(blocks, threadsPerBlock, dev_old_data, dev_cur_data, dev_new_data, file_output, numberOfNodes, courantSquared, dx, dt);
         
         //Left boundary condition on the CPU - a sum of sine waves
         const float t = timestepIndex * dt;
@@ -189,7 +197,12 @@ int main(int argc, char* argv[]) {
         /* TODO: Apply left and right boundary conditions on the GPU. 
         The right boundary conditon will be 0 at the last position
         for all times t */
-        
+        cudaMemcpy(dev_new_data, &left_boundary_value, 1*sizeof(float), cudaMemcpyHostToDevice);
+        float* temp = dev_old_data;
+        dev_old_data = dev_cur_data;
+        dev_cur_data = dev_new_data;
+        dev_new_data = temp;
+
         // Check if we need to write a file
         if (CUDATEST_WRITE_ENABLED == true && numberOfOutputFiles > 0 &&
                 (timestepIndex+1) % (numberOfTimesteps / numberOfOutputFiles) 
@@ -197,7 +210,8 @@ int main(int argc, char* argv[]) {
             
             
             /* TODO: Copy data from GPU back to the CPU in file_output */
-            
+            cudaMemcpy(file_output, dev_new_data, numberOfNodes * sizeof(float), cudaMemcpyDeviceToHost);
+
             printf("writing an output file\n");
             // make a filename
             char filename[500];
@@ -215,6 +229,10 @@ int main(int argc, char* argv[]) {
     
     
     /* TODO: Clean up GPU memory */
+    delete[] file_output;
+    cudaFree(dev_old_data);
+    cudaFree(dev_cur_data);
+    cudaFree(dev_new_data);
   
   
 }
