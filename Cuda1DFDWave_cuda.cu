@@ -16,12 +16,9 @@ __global__
 void
 cudaWaveKernel(const float* dev_old_data,
     const float* dev_cur_data,
-    const float* dev_new_data,
-    float* file_output,
+    float* dev_new_data,
     const size_t numberOfNodes,
-    const float courantSquared,
-    const float dx,
-    const float dt) {
+    const float courantSquared) {
     unsigned int idx = threadIdx.x + blockIdx.x * blockDim.x;
     while (idx >= 1 && idx <= numberOfNodes - 2) {
         dev_new_data[idx] = 2 * dev_cur_data[idx] - dev_old_data + courantSquared*dev_cur_data[idx+1] - 2*dev_cur_data[idx] + dev_cur_data[idx-1];
@@ -34,11 +31,8 @@ void cudaCallWaveKernel(const unsigned int blocks,
     const unsigned int threadsPerBlock,
     const float* dev_old_data,
     const float* dev_cur_data,
-    const float* dev_new_data,
-    float* file_output,
+    float* dev_new_data,
     const size_t numberOfNodes,
-    const float courantSquared,
-    const float dx,
-    const float dt) {
-    cudaWaveKernel<<<blocks, threadsPerBlock>>> (dev_old_data, dev_cur_data, dev_new_data, file_output, numberOfNodes, courantSquared, dx, dt);
+    const float courantSquared) {
+    cudaWaveKernel<<<blocks, threadsPerBlock>>> (dev_old_data, dev_cur_data, dev_new_data, numberOfNodes, courantSquared);
 }
