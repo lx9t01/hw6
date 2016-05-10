@@ -182,7 +182,7 @@ int main(int argc, char* argv[]) {
         
         /* TODO: Call a kernel to solve the problem (you'll need to make
         the kernel in the .cu file) */
-        // cudaCallWaveKernel(blocks, threadsPerBlock, dev_old_data, dev_cur_data, dev_new_data, numberOfNodes, courantSquared);
+        cudaCallWaveKernel(blocks, threadsPerBlock, dev_old_data, dev_cur_data, dev_new_data, numberOfNodes, courantSquared);
         printf("kernel called %d \n", (int)timestepIndex);
         //Left boundary condition on the CPU - a sum of sine waves
         const float t = timestepIndex * dt;
