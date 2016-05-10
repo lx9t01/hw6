@@ -24,6 +24,9 @@ cudaWaveKernel(const float* dev_old_data,
         dev_new_data[idx] = 2 * dev_cur_data[idx] - dev_old_data[idx] + courantSquared * (dev_cur_data[idx+1] - 2*dev_cur_data[idx] + dev_cur_data[idx-1]);
         idx += blockDim.x * gridDim.x;
     }
+    if (idx == 0) {
+        idx += blockDim.x * gridDim.x;
+    }
 }
 
 
