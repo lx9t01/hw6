@@ -20,11 +20,11 @@ cudaWaveKernel(const float* dev_old_data,
     const size_t numberOfNodes,
     const float courantSquared) {
     unsigned int idx = threadIdx.x + blockIdx.x * blockDim.x;
-    while (idx >= 1 && idx <= numberOfNodes - 2) {
+    while (idx >= 0 && idx <= numberOfNodes - 2) {
+        if (idx == 0) {
+            idx += blockDim.x * gridDim.x;
+        }
         dev_new_data[idx] = 2 * dev_cur_data[idx] - dev_old_data[idx] + courantSquared * (dev_cur_data[idx+1] - 2*dev_cur_data[idx] + dev_cur_data[idx-1]);
-        idx += blockDim.x * gridDim.x;
-    }
-    if (idx == 0) {
         idx += blockDim.x * gridDim.x;
     }
 }
