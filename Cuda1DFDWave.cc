@@ -187,7 +187,7 @@ int main(int argc, char* argv[]) {
 
     
     // Looping through all times t = 0, ..., t_max
-    int flag = 0;
+    int flag = 0; 
     for (size_t timestepIndex = 0; timestepIndex < numberOfTimesteps;
             ++timestepIndex) {
         
@@ -235,14 +235,29 @@ int main(int argc, char* argv[]) {
         if (flag == 3) {
           flag = 0;
           // copy and switch data betwee GPUs
-          cudaMemcpy(dev_old_data[1], dev_old_data[0]+prev_length-6, 3 * sizeof(float), cudaMemcpyDefault);
-          cudaMemcpy(dev_cur_data[1], dev_cur_data[0]+prev_length-6, 3 * sizeof(float), cudaMemcpyDefault);
-          cudaMemcpy(dev_old_data[0]+prev_length-3, dev_old_data[1]+3, 3 * sizeof(float), cudaMemcpyDefault);
-          cudaMemcpy(dev_cur_data[0]+prev_length-3, dev_cur_data[1]+3, 3 * sizeof(float), cudaMemcpyDefault);
-          cudaMemcpy(dev_old_data[2], dev_old_data[1]+prev_length-6, 3 * sizeof(float), cudaMemcpyDefault);
-          cudaMemcpy(dev_cur_data[2], dev_cur_data[1]+prev_length-6, 3 * sizeof(float), cudaMemcpyDefault);
-          cudaMemcpy(dev_old_data[1]+prev_length-3, dev_old_data[2]+3, 3 * sizeof(float), cudaMemcpyDefault);
-          cudaMemcpy(dev_cur_data[1]+prev_length-3, dev_cur_data[2]+3, 3 * sizeof(float), cudaMemcpyDefault);
+          // cudaMemcpy(dev_old_data[1], dev_old_data[0]+prev_length-6, 3 * sizeof(float), cudaMemcpyDefault);
+          // cudaMemcpy(dev_cur_data[1], dev_cur_data[0]+prev_length-6, 3 * sizeof(float), cudaMemcpyDefault);
+          
+          // cudaMemcpy(dev_old_data[2], dev_old_data[1]+prev_length-6, 3 * sizeof(float), cudaMemcpyDefault);
+          // cudaMemcpy(dev_cur_data[2], dev_cur_data[1]+prev_length-6, 3 * sizeof(float), cudaMemcpyDefault);
+
+          // cudaMemcpy(dev_old_data[0]+prev_length-3, dev_old_data[1]+3, 3 * sizeof(float), cudaMemcpyDefault);
+          // cudaMemcpy(dev_cur_data[0]+prev_length-3, dev_cur_data[1]+3, 3 * sizeof(float), cudaMemcpyDefault);
+          
+          // cudaMemcpy(dev_old_data[1]+prev_length-3, dev_old_data[2]+3, 3 * sizeof(float), cudaMemcpyDefault);
+          // cudaMemcpy(dev_cur_data[1]+prev_length-3, dev_cur_data[2]+3, 3 * sizeof(float), cudaMemcpyDefault);
+
+          cudaMemcpyPeer(dev_old_data[1], 1, dev_old_data[0]+prev_length-6, 0, 3 * sizeof(float));
+          cudaMemcpyPeer(dev_cur_data[1], 1, dev_cur_data[0]+prev_length-6, 0, 3 * sizeof(float));
+          
+          cudaMemcpyPeer(dev_old_data[2], 2, dev_old_data[1]+prev_length-6, 1, 3 * sizeof(float));
+          cudaMemcpyPeer(dev_cur_data[2], 2, dev_cur_data[1]+prev_length-6, 1, 3 * sizeof(float), cudaMemcpyDefault);
+
+          cudaMemcpyPeer(dev_old_data[0]+prev_length-3, 0, dev_old_data[1]+3, 1, 3 * sizeof(float), cudaMemcpyDefault);
+          cudaMemcpyPeer(dev_cur_data[0]+prev_length-3, 0, dev_cur_data[1]+3, 1, 3 * sizeof(float), cudaMemcpyDefault);
+          
+          cudaMemcpyPeer(dev_old_data[1]+prev_length-3, 1, dev_old_data[2]+3, 2, 3 * sizeof(float), cudaMemcpyDefault);
+          cudaMemcpyPeer(dev_cur_data[1]+prev_length-3, 1, dev_cur_data[2]+3, 2, 3 * sizeof(float), cudaMemcpyDefault);
 
         } else {
           flag++;
