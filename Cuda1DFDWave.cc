@@ -173,9 +173,9 @@ int main(int argc, char* argv[]) {
       cudaMalloc((void**)&dev_old_data[i], sizeof(float)*prev_length);
       cudaMalloc((void**)&dev_cur_data[i], sizeof(float)*prev_length);
       cudaMalloc((void**)&dev_new_data[i], sizeof(float)*prev_length);
-      cudaMemset(dev_old_data[i], 0, sizeof(float)*prev_length;
-      cudaMemset(dev_cur_data[i], 0, sizeof(float)*prev_length;
-      cudaMemset(dev_new_data[i], 0, sizeof(float)*prev_length;
+      cudaMemset(dev_old_data[i], 0, sizeof(float)*prev_length);
+      cudaMemset(dev_cur_data[i], 0, sizeof(float)*prev_length);
+      cudaMemset(dev_new_data[i], 0, sizeof(float)*prev_length);
     }
     cudaSetDevice(num_GPU-1);
     cudaMalloc((void**)&dev_new_data[num_GPU-1], sizeof(float)*last_length);
