@@ -165,8 +165,8 @@ int main(int argc, char* argv[]) {
     float* dev_cur_data[num_GPU];
     float* dev_new_data[num_GPU];
 
-    float prev_length = numberOfNodes/num_GPU + 6;
-    float last_length = numberOfNodes - numberOfNodes/num_GPU*(num_GPU-1) + 6
+    int prev_length = numberOfNodes/num_GPU + 6;
+    int last_length = numberOfNodes - numberOfNodes/num_GPU*(num_GPU-1) + 6;
 
     for (int i = 0; i < num_GPU-1; ++i) {
       cudaSetDevice(i);
@@ -232,7 +232,7 @@ int main(int argc, char* argv[]) {
 
         int flag = 0;
         if (flag == 3) {
-          flag = 0
+          flag = 0;
           // copy and switch data betwee GPUs
           cudaMemcpy(dev_old_data[1], dev_old_data[0]+prev_length-6, 3 * sizeof(float), cudaMemcpyDefault);
           cudaMemcpy(dev_cur_data[1], dev_cur_data[0]+prev_length-6, 3 * sizeof(float), cudaMemcpyDefault);
