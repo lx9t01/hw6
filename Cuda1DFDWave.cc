@@ -187,6 +187,7 @@ int main(int argc, char* argv[]) {
 
     
     // Looping through all times t = 0, ..., t_max
+    int flag = 0;
     for (size_t timestepIndex = 0; timestepIndex < numberOfTimesteps;
             ++timestepIndex) {
         
@@ -230,7 +231,7 @@ int main(int argc, char* argv[]) {
           dev_new_data[i] = temp[i];
         }
 
-        int flag = 0;
+        
         if (flag == 3) {
           flag = 0;
           // copy and switch data betwee GPUs
