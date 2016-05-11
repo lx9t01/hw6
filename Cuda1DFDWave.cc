@@ -232,7 +232,7 @@ int main(int argc, char* argv[]) {
         }
 
         
-        if (flag == 3) {
+        if (true) {
           flag = 0;
           // copy and switch data betwee GPUs
           // cudaMemcpy(dev_old_data[1], dev_old_data[0]+prev_length-6, 3 * sizeof(float), cudaMemcpyDefault);
