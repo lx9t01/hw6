@@ -160,31 +160,15 @@ int main(int argc, char* argv[]) {
 
     /* TODO: Create GPU memory for your calculations. 
     As an initial condition at time 0, zero out your memory as well. */
-    const int num_GPU = 3;
-    float* dev_old_data[num_GPU];
-    float* dev_cur_data[num_GPU];
-    float* dev_new_data[num_GPU];
-
-    float prev_length = numberOfNodes/num_GPU + 6;
-    float last_length = numberOfNodes - numberOfNodes/num_GPU*(num_GPU-1) + 6
-
-    for (int i = 0; i < num_GPU-1; ++i) {
-      cudaSetDevice(i);
-      cudaMalloc((void**)&dev_old_data[i], sizeof(float)*prev_length);
-      cudaMalloc((void**)&dev_cur_data[i], sizeof(float)*prev_length);
-      cudaMalloc((void**)&dev_new_data[i], sizeof(float)*prev_length);
-      cudaMemset(dev_old_data[i], 0, sizeof(float)*prev_length;
-      cudaMemset(dev_cur_data[i], 0, sizeof(float)*prev_length;
-      cudaMemset(dev_new_data[i], 0, sizeof(float)*prev_length;
-    }
-    cudaSetDevice(num_GPU-1);
-    cudaMalloc((void**)&dev_new_data[num_GPU-1], sizeof(float)*last_length);
-    cudaMalloc((void**)&dev_cur_data[num_GPU-1], sizeof(float)*last_length);
-    cudaMalloc((void**)&dev_old_data[num_GPU-1], sizeof(float)*last_length);
-    cudaMemset(dev_old_data[num_GPU-1], 0, sizeof(float)*last_length);
-    cudaMemset(dev_cur_data[num_GPU-1], 0, sizeof(float)*last_length);
-    cudaMemset(dev_new_data[num_GPU-1], 0, sizeof(float)*last_length);
-
+    float* dev_old_data;
+    float* dev_cur_data;
+    float* dev_new_data;
+    cudaMalloc((void**)&dev_old_data, sizeof(float)*numberOfNodes);
+    cudaMalloc((void**)&dev_cur_data, sizeof(float)*numberOfNodes);
+    cudaMalloc((void**)&dev_new_data, sizeof(float)*numberOfNodes);
+    cudaMemset(dev_old_data, 0, sizeof(float)*numberOfNodes);
+    cudaMemset(dev_cur_data, 0, sizeof(float)*numberOfNodes);
+    cudaMemset(dev_new_data, 0, sizeof(float)*numberOfNodes);
     
     // Looping through all times t = 0, ..., t_max
     for (size_t timestepIndex = 0; timestepIndex < numberOfTimesteps;
@@ -195,16 +179,11 @@ int main(int argc, char* argv[]) {
                  timestepIndex, 100 * timestepIndex / float(numberOfTimesteps));
         }
         
+        
         /* TODO: Call a kernel to solve the problem (you'll need to make
         the kernel in the .cu file) */
-        for (int i = 0; i < num_GPU-1; ++i) {
-          cudaSetDevice(i);
-          cudaCallWaveKernel(blocks, threadsPerBlock, dev_old_data[i], dev_cur_data[i], dev_new_data[i], prev_length, courantSquared);
-        }
-        cudaSetDevice(num_GPU-1);
-        cudaCallWaveKernel(blocks, threadsPerBlock, dev_old_data[num_GPU-1], dev_cur_data[num_GPU-1], dev_new_data[num_GPU-1], last_length, courantSquared);
-
-        // printf("kernel called %d \n", (int)timestepIndex);
+        cudaCallWaveKernel(blocks, threadsPerBlock, dev_old_data, dev_cur_data, dev_new_data, numberOfNodes, courantSquared);
+        printf("kernel called %d \n", (int)timestepIndex);
         //Left boundary condition on the CPU - a sum of sine waves
         const float t = timestepIndex * dt;
         float left_boundary_value;
@@ -219,33 +198,13 @@ int main(int argc, char* argv[]) {
         The right boundary conditon will be 0 at the last position
         for all times t */
         float right_boundary_value = 0.0;
-        cudaMemcpy(dev_new_data[0]+3, &left_boundary_value, 1 * sizeof(float), cudaMemcpyHostToDevice);
-        cudaMemcpy(dev_new_data[num_GPU-1]+(last_length-3-1), &right_boundary_value, 1 * sizeof(float), cudaMemcpyHostToDevice);
+        cudaMemcpy(dev_new_data, &left_boundary_value, 1 * sizeof(float), cudaMemcpyHostToDevice);
+        cudaMemcpy(dev_new_data + numberOfTimesteps, &right_boundary_value, 1 * sizeof(float), cudaMemcpyHostToDevice);
 
-        float* temp[3];
-        for (int i = 0; i < 3; ++i) {
-          temp[i] = dev_old_data[i];
-          dev_old_data[i] = dev_cur_data[i];
-          dev_cur_data[i] = dev_new_data[i];
-          dev_new_data[i] = temp[i];
-        }
-
-        int flag = 0;
-        if (flag == 3) {
-          flag = 0
-          // copy and switch data betwee GPUs
-          cudaMemcpy(dev_old_data[1], dev_old_data[0]+prev_length-6, 3 * sizeof(float), cudaMemcpyDefault);
-          cudaMemcpy(dev_cur_data[1], dev_cur_data[0]+prev_length-6, 3 * sizeof(float), cudaMemcpyDefault);
-          cudaMemcpy(dev_old_data[0]+prev_length-3, dev_old_data[1]+3, 3 * sizeof(float), cudaMemcpyDefault);
-          cudaMemcpy(dev_cur_data[0]+prev_length-3, dev_cur_data[1]+3, 3 * sizeof(float), cudaMemcpyDefault);
-          cudaMemcpy(dev_old_data[2], dev_old_data[1]+prev_length-6, 3 * sizeof(float), cudaMemcpyDefault);
-          cudaMemcpy(dev_cur_data[2], dev_cur_data[1]+prev_length-6, 3 * sizeof(float), cudaMemcpyDefault);
-          cudaMemcpy(dev_old_data[1]+prev_length-3, dev_old_data[2]+3, 3 * sizeof(float), cudaMemcpyDefault);
-          cudaMemcpy(dev_cur_data[1]+prev_length-3, dev_cur_data[2]+3, 3 * sizeof(float), cudaMemcpyDefault);
-
-        } else {
-          flag++;
-        }
+        float* temp = dev_old_data;
+        dev_old_data = dev_cur_data;
+        dev_cur_data = dev_new_data;
+        dev_new_data = temp;
 
         // Check if we need to write a file
         if (CUDATEST_WRITE_ENABLED == true && numberOfOutputFiles > 0 &&
@@ -254,10 +213,7 @@ int main(int argc, char* argv[]) {
             
             
             /* TODO: Copy data from GPU back to the CPU in file_output */
-            cudaMemcpy(file_output, dev_new_data[0]+3, (prev_length-6) * sizeof(float), cudaMemcpyDeviceToHost);
-            cudaMemcpy(file_output+(prev_length-6), dev_new_data[1]+3, (prev_length-6) * sizeof(float), cudaMemcpyDeviceToHost);
-            cudaMemcpy(file_output+2*(prev_length-6), dev_new_data[2]+3, (last_length-6) * sizeof(float), cudaMemcpyDeviceToHost);
-
+            cudaMemcpy(file_output, dev_new_data, numberOfNodes * sizeof(float), cudaMemcpyDeviceToHost);
 
             printf("writing an output file\n");
             // make a filename
@@ -277,12 +233,9 @@ int main(int argc, char* argv[]) {
     
     /* TODO: Clean up GPU memory */
     delete[] file_output;
-    for (int i = 0; i < num_GPU-1; ++i) {
-      cudaFree(dev_old_data[i]);
-      cudaFree(dev_cur_data[i]);
-      cudaFree(dev_new_data[i]);
-    }
-    
+    cudaFree(dev_old_data);
+    cudaFree(dev_cur_data);
+    cudaFree(dev_new_data);
   
   
 }
