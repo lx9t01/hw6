@@ -87,11 +87,12 @@ int main (int argc, char** argv) {
     const int T = 1000; // the total time interval after resampling
 
     // the matrix for resampled data
-    float resamp_X = new float[N][T]();
+    float* resamp_X = new float[N*T]();
+
     float* dev_resample_X;
     cudaMalloc((void**)&dev_resample_X, N * sizeof(float));
     // the matrix to mark if a time point has been ipdated
-    int is_resampled = new int[N][T]();
+    int is_resampled = new int[N*T]();
     int* dev_is_resampled;
     cudaMalloc((void**)&dev_is_resampled, N * sizeof(float));
 
