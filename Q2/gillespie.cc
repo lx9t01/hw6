@@ -120,7 +120,6 @@ int main (int argc, char** argv) {
                 break;
         } else {
                 cerr << "No kernel error detected" << endl;
-                
         }
         printf("Gill kernel called\n");
 
@@ -141,7 +140,6 @@ int main (int argc, char** argv) {
                 break;
         } else {
                 cerr << "No kernel error detected" << endl;
-                
         }
         printf("resampled\n");
 
@@ -159,13 +157,19 @@ int main (int argc, char** argv) {
                 cerr << "Error " << cudaGetErrorString(err) << endl;
                 break;
         } else {
-                cerr << "No kernel error detected" << endl;
-                
+                cerr << "No kernel error detected" << endl; 
         }
         printf("min get\n");
-        
+
         cudaMemcpy(&host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost);
         printf("%f\n", host_min_time);
+        err = cudaGetLastError();
+        if  (cudaSuccess != err){
+                cerr << "Error " << cudaGetErrorString(err) << endl;
+                break;
+        } else {
+                cerr << "No kernel error detected" << endl; 
+        }
     }
 
     // FILE *outputFile = fopen("output.txt", "w");
