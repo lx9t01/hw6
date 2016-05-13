@@ -105,7 +105,7 @@ int main (int argc, char** argv) {
     curandSetPseudoRandomGeneratorSeed(gen, 1234);
     cudaError err; 
 
-    while (host_min_time <= final_time) {
+    while (*host_min_time <= final_time) {
         CURAND_CALL(curandGenerateUniform(gen, dev_points, rand_number * sizeof(float))); // illegal memory accuss?
         printf("rand number generated\n");
 
@@ -162,7 +162,7 @@ int main (int argc, char** argv) {
         printf("min get\n");
 
         cudaMemcpy(host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost);
-        printf("%f\n", host_min_time);
+        printf("%f\n", *host_min_time);
         err = cudaGetLastError();
         if  (cudaSuccess != err){
                 cerr << "Error " << cudaGetErrorString(err) << endl;
