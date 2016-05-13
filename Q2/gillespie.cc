@@ -109,8 +109,6 @@ int main (int argc, char** argv) {
     while (*host_min_time <= final_time) {
         CURAND_CALL(curandGenerateUniform(gen, dev_points, rand_number * sizeof(float))); // illegal memory accuss?
         printf("rand number generated\n");
-
-        printf("Gill kernel called\n");
         // for each iteration, call a kernel
         // calculates state, X concentration, timestep, accumulate time
         cudaCallGillKernel(blocks, threadsPerBlock, dev_points, state, dev_X, dev_timestep, dev_accu_time, N);
@@ -162,7 +160,7 @@ int main (int argc, char** argv) {
         }
         printf("min get\n");
 
-        cudaMemcpy(host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost);
+        gpuErrchk(cudaMemcpy(host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost));
         printf("%f\n", *host_min_time);
         err = cudaGetLastError();
         if  (cudaSuccess != err){
