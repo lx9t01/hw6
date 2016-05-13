@@ -1,0 +1,33 @@
+// gillespie_cuda.cuh Haixiang Xu
+
+
+#ifndef CUDA_FFT_CONVOLVE_CUH
+#define CUDA_FFT_CONVOLVE_CUH
+
+void cudaCallGillKernel(const int blocks,
+    const int threadsPerBlock,
+    const float* dev_points, 
+    float* state,
+    float* X, 
+    float* dev_timestep,
+    float* dev_accu_time,
+    const int N);
+
+void cudaCallFindMinKernel(const int blocks,
+    const int threadsPerBlock,
+    const float* dev_accu_time,
+    float* dev_min_time,
+    const int N);
+
+void cudaCallResampleKernel(const int blocks, 
+    const int threadsPerBlock, 
+    float* dev_resample_X, 
+    int* dev_is_resampled, 
+    const float* dev_X, 
+    const float* dev_accu_time, 
+    const int N, 
+    const int T);
+
+
+
+#endif
