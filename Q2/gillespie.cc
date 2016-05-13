@@ -123,8 +123,8 @@ int main (int argc, char** argv) {
         float* test_accu = (float*)malloc(N * sizeof(float));
         gpuErrchk(cudaMemcpy(test_accu, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost));
 
-            printf("this time step: %f\n", test[0]);
-            printf("accu time step: %f\n", test_accu[0]);
+            // printf("this time step: %f\n", test[0]);
+            // printf("accu time step: %f\n", test_accu[0]);
         
 
         printf("Gill kernel called\n");
@@ -147,10 +147,16 @@ int main (int argc, char** argv) {
         // vector_accu_time.push_back(v_accu_time);
 
         // run a reduction kernel to find the minimum accumulate time       
-        cudaCallFindMinKernel(blocks, threadsPerBlock, dev_accu_time, dev_min_time, N);
-        
+        // cudaCallFindMinKernel(blocks, threadsPerBlock, dev_accu_time, dev_min_time, N);
+        float new_min = 99999;
+        for (int i = 0; i < N; ++i) {
+            if (test_accu[i] < new_min) {
+                new_min = test_accu[i];
+            }
+        }
+        *host_min_time = new_min;
 
-        gpuErrchk(cudaMemcpy(host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost));
+        // gpuErrchk(cudaMemcpy(host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost));
         printf("min get\n");
         printf("this min: %f\n", *host_min_time);
     }
