@@ -163,16 +163,7 @@ int main (int argc, char** argv) {
 
         gpuErrchk(cudaMemcpy(host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost));
         printf("min get\n");
-        printf("%f\n", *host_min_time);
-
-        
-        err = cudaGetLastError();
-        if  (cudaSuccess != err){
-                cerr << "Error " << cudaGetErrorString(err) << endl;
-                break;
-        } else {
-                cerr << "No kernel error detected" << endl; 
-        }
+        printf("this min: %f\n", *host_min_time);
     }
 
     // FILE *outputFile = fopen("output.txt", "w");
