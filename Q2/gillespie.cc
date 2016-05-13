@@ -81,6 +81,7 @@ int main (int argc, char** argv) {
     cudaMalloc((void**)&dev_accu_time, N * sizeof(float));
     cudaMemset(dev_accu_time, 0, N * sizeof(float));
     float* host_min_time;
+    *host_min_time = 0;
     float* dev_min_time;
     cudaMalloc((void**)&dev_min_time, 1 * sizeof(float));
 
