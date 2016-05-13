@@ -7,6 +7,7 @@
 void cudaCallGillKernel(const int blocks,
     const int threadsPerBlock,
     const float* dev_points, 
+    const float* dev_points_2, 
     float* state,
     float* X, 
     float* dev_timestep,
