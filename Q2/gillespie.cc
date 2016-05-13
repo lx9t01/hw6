@@ -62,8 +62,8 @@ int main (int argc, char** argv) {
     const int rand_number = 2 * N; // number of random numbers, which is 2 times of N
 
     cudaMalloc((void**)&dev_points, rand_number * sizeof(float));
-    // curandGenerator_t gen;
-    // curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT);
+    curandGenerator_t gen;
+    curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT);
 
     float* state;
     float* dev_X;
@@ -102,14 +102,14 @@ int main (int argc, char** argv) {
     cudaMalloc((void**)&dev_is_resampled, N * T * sizeof(float));
 
     const float final_time = 100;
-    // curandSetPseudoRandomGeneratorSeed(gen, 1234);
+    curandSetPseudoRandomGeneratorSeed(gen, 1234);
     cudaError err; 
 
     while (host_min_time <= final_time) {
-        curandGenerator_t gen;
-        curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT);
+        // curandGenerator_t gen;
+        // curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT);
 
-        CURAND_CALL(curandGenerateUniform(gen, dev_points, rand_number));
+        CURAND_CALL(curandGenerateUniform(gen, dev_points, rand_number * sizeof(float))); // illegal memory accuss?
         printf("rand number generated\n");
 
         printf("Gill kernel called\n");
@@ -163,7 +163,7 @@ int main (int argc, char** argv) {
         printf("min get\n");
         cudaMemcpy(&host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost);
         printf("%f\n", host_min_time);
-        curandDestroyGenerator(gen);
+        // curandDestroyGenerator(gen);
 
         // delete[] host_X;
         // delete[] host_accu_time;
