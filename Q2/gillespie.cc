@@ -80,8 +80,8 @@ int main (int argc, char** argv) {
     float* dev_accu_time;
     cudaMalloc((void**)&dev_accu_time, N * sizeof(float));
     cudaMemset(dev_accu_time, 0, N * sizeof(float));
-    float* host_min_time;
-    *host_min_time = 0;
+    float* host_min_time = (float*)malloc(1 * sizeof(float));
+
     float* dev_min_time;
     cudaMalloc((void**)&dev_min_time, 1 * sizeof(float));
 
@@ -180,6 +180,7 @@ int main (int argc, char** argv) {
 
     // //
     // fclose(outputFile);
+    free(host_min_time);
     cudaFree(state);
     cudaFree(dev_X);
     cudaFree(dev_points);
