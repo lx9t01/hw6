@@ -122,7 +122,7 @@ int main (int argc, char** argv) {
         // cudaMemcpy(host_accu_time, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
 
         cudaCallResampleKernel(blocks, threadsPerBlock, dev_resample_X, dev_is_resampled, dev_X, dev_accu_time, N, T);
-        cudaError err = cudaGetLastError();
+        err = cudaGetLastError();
         if  (cudaSuccess != err){
                 cerr << "Error " << cudaGetErrorString(err) << endl;
         } else {
@@ -137,7 +137,7 @@ int main (int argc, char** argv) {
 
         // run a reduction kernel to find the minimum accumulate time       
         cudaCallFindMinKernel(blocks, threadsPerBlock, dev_accu_time, dev_min_time, N);
-        cudaError err = cudaGetLastError();
+        err = cudaGetLastError();
         if  (cudaSuccess != err){
                 cerr << "Error " << cudaGetErrorString(err) << endl;
         } else {
