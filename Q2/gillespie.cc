@@ -57,11 +57,14 @@ int main (int argc, char** argv) {
     const int threadsPerBlock = atoi(argv[1]);
     const int blocks = atoi(argv[2]);
 
-    float* dev_points;
-    const int N = 100; // each iteration there is N simulations running
-    const int rand_number = 2 * N; // number of random numbers, which is 2 times of N
+    float* dev_points; // to determine the timestep
+    float* dev_points_2; // to determine the reaction
 
-    cudaMalloc((void**)&dev_points, rand_number * sizeof(float));
+    const int N = 100; // each iteration there is N simulations running
+
+    cudaMalloc((void**)&dev_points, N * sizeof(float));
+    cudaMalloc((void**)&dev_points_2, N * sizeof(float));
+
     curandGenerator_t gen;
     curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT);
 
@@ -108,11 +111,13 @@ int main (int argc, char** argv) {
     cudaError err; 
 
     while (*host_min_time <= final_time) {
-        CURAND_CALL(curandGenerateUniform(gen, dev_points, rand_number * sizeof(float))); // illegal memory accuss?
+        CURAND_CALL(curandGenerateUniform(gen, dev_points, N * sizeof(float)));
+        CURAND_CALL(curandGenerateUniform(gen, dev_points_2, N * sizeof(float)));
+
         printf("rand number generated\n");
         // for each iteration, call a kernel
         // calculates state, X concentration, timestep, accumulate time
-        cudaCallGillKernel(blocks, threadsPerBlock, dev_points, state, dev_X, dev_timestep, dev_accu_time, N);
+        cudaCallGillKernel(blocks, threadsPerBlock, dev_points, dev_points_2, state, dev_X, dev_timestep, dev_accu_time, N);
         float* test = (float*)malloc(N * sizeof(float));
         gpuErrchk(cudaMemcpy(test, dev_timestep, N * sizeof(float), cudaMemcpyDeviceToHost));
         float* test_accu = (float*)malloc(N * sizeof(float));
@@ -161,6 +166,7 @@ int main (int argc, char** argv) {
     cudaFree(state);
     cudaFree(dev_X);
     cudaFree(dev_points);
+    cudaFree(dev_points_2);
     cudaFree(dev_timestep);
     cudaFree(dev_accu_time);
     cudaFree(dev_min_time);

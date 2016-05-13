@@ -23,6 +23,7 @@ __device__ static float atomicMin(float* address, float val)
 // given as an argument.
 __global__
 void cudaGillKernel(const float* dev_points,
+    const float* dev_points_2,
     float* state,
     float* X, 
     float* dev_timestep,
@@ -40,7 +41,7 @@ void cudaGillKernel(const float* dev_points,
         if (state == 0){
             dev_timestep[idx] = -log(dev_points[idx]) / (kon + X[idx] * g);
             dev_accu_time[idx] += dev_timestep[idx];
-            if (dev_points[idx + N] > kon / (kon + X[idx] * g)) { // if X--
+            if (dev_points_2[idx] > kon / (kon + X[idx] * g)) { // if X--
                 X[idx]--;
             } else { // if OFF --> ON
                 state[idx] = 1;
@@ -48,9 +49,9 @@ void cudaGillKernel(const float* dev_points,
         } else {
             dev_timestep[idx] = -log(dev_points[idx]) / (koff + b + X[idx] * g);
             dev_accu_time[idx] += dev_timestep[idx];
-            if (dev_points[idx + N] <= koff / (koff + b + X[idx] * g)) { // ON --> OFF
+            if (dev_points_2[idx] <= koff / (koff + b + X[idx] * g)) { // ON --> OFF
                 state[idx] = 0;
-            } else if (dev_points[idx + N] <= (koff + b) / (koff + b + X[idx] * g)) { // X++
+            } else if (dev_points_2[idx] <= (koff + b) / (koff + b + X[idx] * g)) { // X++
                 X[idx]++;
             } else { // X--
                 X[idx]--;
@@ -118,12 +119,13 @@ void cudaResampleKernel(
 void cudaCallGillKernel(const int blocks,
     const int threadsPerBlock,
     const float* dev_points, 
+    const float* dev_points_2, 
     float* state,
     float* X, 
     float* dev_timestep,
     float* dev_accu_time,
     const int N) {
-    cudaGillKernel<<<blocks, threadsPerBlock>>>(dev_points, state, X, dev_timestep, dev_accu_time, N);
+    cudaGillKernel<<<blocks, threadsPerBlock>>>(dev_points, dev_points_2, state, X, dev_timestep, dev_accu_time, N);
 }
 
 void cudaCallFindMinKernel(const int blocks, 
