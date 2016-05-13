@@ -107,6 +107,7 @@ int main (int argc, char** argv) {
                 cerr << "Error " << cudaGetErrorString(err) << endl;
         } else {
                 cerr << "No kernel error detected" << endl;
+                break;
         }
         printf("Gill kernel called\n");
         // for each iteration, call a kernel
@@ -117,6 +118,7 @@ int main (int argc, char** argv) {
                 cerr << "Error " << cudaGetErrorString(err) << endl;
         } else {
                 cerr << "No kernel error detected" << endl;
+                break;
         }
         printf("Gill kernel called\n");
         // float* host_state = new float[N]();
@@ -134,6 +136,7 @@ int main (int argc, char** argv) {
                 cerr << "Error " << cudaGetErrorString(err) << endl;
         } else {
                 cerr << "No kernel error detected" << endl;
+                break;
         }
         printf("resampled\n");
         // std::vector<float> v_X(std::begin(host_X), std::end(host_X)); // c++ 11
@@ -149,6 +152,7 @@ int main (int argc, char** argv) {
                 cerr << "Error " << cudaGetErrorString(err) << endl;
         } else {
                 cerr << "No kernel error detected" << endl;
+                break;
         }
         printf("min get\n");
         cudaMemcpy(&host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost);
