@@ -17,6 +17,18 @@ __device__ static float atomicMin(float* address, float val)
     return __int_as_float(old);
 }
 
+__device__ static float atomicMax(float* address, float val)
+{
+    int* address_as_i = (int*) address;
+    int old = *address_as_i, assumed;
+    do {
+        assumed = old;
+        old = ::atomicCAS(address_as_i, assumed,
+            __float_as_int(::fmaxf(val, __int_as_float(assumed))));
+    } while (assumed != old);
+    return __int_as_float(old);
+}
+
 
 // a single iteration of the Gillespie algorithm on 
 // the given system using an array of random numbers 
@@ -71,12 +83,12 @@ void cudaFindMinKernel (
     unsigned int idx = threadIdx.x + blockIdx.x * blockDim.x;
     __shared__ float data[64]; // rememeber to update this !!!!!!!
 
-    data[threadIdx.x] = 99999; // 64 threads per block
-    __syncthreads();
-
-
     while (idx < N) {
-        atomicMin(&data[threadIdx.x], dev_timestep[idx]);
+        if (data[threadIdx.x] == 0.0) {
+            atomicMax(&data[threadIdx.x], dev_timestep[idx]);
+        } else {
+            atomicMin(&data[threadIdx.x], dev_timestep[idx]);
+        }
         idx += blockDim.x * gridDim.x;
     }
 
