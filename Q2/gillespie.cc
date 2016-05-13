@@ -180,8 +180,8 @@ int main (int argc, char** argv) {
     cudaFree(dev_timestep);
     cudaFree(dev_accu_time);
     cudaFree(dev_min_time);
-    delete[] resamp_X;
-    delete[] is_resampled;
+    delete resamp_X;
+    delete is_resampled;
 
     // delete[](host_X);
 
