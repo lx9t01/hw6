@@ -81,6 +81,7 @@ int main (int argc, char** argv) {
     cudaMalloc((void**)&dev_accu_time, N * sizeof(float));
     cudaMemset(dev_accu_time, 0, N * sizeof(float));
     float* host_min_time = (float*)malloc(1 * sizeof(float));
+    memset(host_min_time, 0, 1 * sizeof(float));
 
     float* dev_min_time;
     cudaMalloc((void**)&dev_min_time, 1 * sizeof(float));
@@ -158,10 +159,13 @@ int main (int argc, char** argv) {
         } else {
                 cerr << "No kernel error detected" << endl; 
         }
-        printf("min get\n");
+        
 
         gpuErrchk(cudaMemcpy(host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost));
+        printf("min get\n");
         printf("%f\n", *host_min_time);
+
+        
         err = cudaGetLastError();
         if  (cudaSuccess != err){
                 cerr << "Error " << cudaGetErrorString(err) << endl;
