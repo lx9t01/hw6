@@ -85,6 +85,7 @@ void cudaFindMinKernel (
     if (threadIdx.x == 0) {
         atomicMin(min_timestep, data[0]);
     }
+    printf("%f\n", min_timestep);
 
 
 }
