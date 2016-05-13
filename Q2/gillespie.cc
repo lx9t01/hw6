@@ -92,7 +92,7 @@ int main (int argc, char** argv) {
     float* dev_resample_X;
     cudaMalloc((void**)&dev_resample_X, N * sizeof(float));
     // the matrix to mark if a time point has been ipdated
-    int is_resampled = new int[N*T]();
+    int* is_resampled = new int[N*T]();
     int* dev_is_resampled;
     cudaMalloc((void**)&dev_is_resampled, N * sizeof(float));
 
@@ -123,7 +123,7 @@ int main (int argc, char** argv) {
 
         // run a reduction kernel to find the minimum accumulate time       
         cudaCallFindMinKernel(blocks, threadsPerBlock, dev_accu_time, dev_min_time, N);
-        cudaMemcpy(host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost);
+        cudaMemcpy(&host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost);
 
         // delete[] host_X;
         // delete[] host_accu_time;
@@ -144,7 +144,7 @@ int main (int argc, char** argv) {
     cudaFree(dev_accu_time);
     cudaFree(dev_min_time);
 
-    delete[](host_X);
+    // delete[](host_X);
 
     return EXIT_SUCCESS;
 }
