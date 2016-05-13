@@ -80,7 +80,7 @@ int main (int argc, char** argv) {
     float* dev_accu_time;
     cudaMalloc((void**)&dev_accu_time, N * sizeof(float));
     cudaMemset(dev_accu_time, 0, N * sizeof(float));
-    float host_min_time = 0;
+    float* host_min_time;
     float* dev_min_time;
     cudaMalloc((void**)&dev_min_time, 1 * sizeof(float));
 
@@ -161,7 +161,7 @@ int main (int argc, char** argv) {
         }
         printf("min get\n");
 
-        cudaMemcpy(&host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost);
+        cudaMemcpy(host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost);
         printf("%f\n", host_min_time);
         err = cudaGetLastError();
         if  (cudaSuccess != err){
