@@ -102,10 +102,17 @@ int main (int argc, char** argv) {
     while (host_min_time <= final_time) {
         curandGenerateUniform(gen, dev_points, rand_number);
         printf("rand number generated\n");
+        cudaError err = cudaGetLastError();
+        if  (cudaSuccess != err){
+                cerr << "Error " << cudaGetErrorString(err) << endl;
+        } else {
+                cerr << "No kernel error detected" << endl;
+        }
+        printf("Gill kernel called\n");
         // for each iteration, call a kernel
         // calculates state, X concentration, timestep, accumulate time
         cudaCallGillKernel(blocks, threadsPerBlock, dev_points, state, dev_X, dev_timestep, dev_accu_time, N);
-        cudaError err = cudaGetLastError();
+        err = cudaGetLastError();
         if  (cudaSuccess != err){
                 cerr << "Error " << cudaGetErrorString(err) << endl;
         } else {
