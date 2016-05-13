@@ -113,14 +113,12 @@ int main (int argc, char** argv) {
         // for each iteration, call a kernel
         // calculates state, X concentration, timestep, accumulate time
         cudaCallGillKernel(blocks, threadsPerBlock, dev_points, state, dev_X, dev_timestep, dev_accu_time, N);
-        
-        err = cudaGetLastError();
-        if  (cudaSuccess != err){
-                cerr << "Error " << cudaGetErrorString(err) << endl;
-                break;
-        } else {
-                cerr << "No kernel error detected" << endl;
+        float* test = (float*)malloc(N * sizeof(float));
+        gpuErrchk(cudaMemcpy(test, dev_timestep, N * sizeof(float), cudaMemcpyDeviceToHost));
+        for (int i = 0; i < N; ++i) {
+            printf("this time step: %f\n", test[i]);
         }
+
         printf("Gill kernel called\n");
 
         // float* host_state = new float[N]();
@@ -133,15 +131,6 @@ int main (int argc, char** argv) {
         // cudaMemcpy(host_accu_time, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
 
         cudaCallResampleKernel(blocks, threadsPerBlock, dev_resample_X, dev_is_resampled, dev_X, dev_accu_time, N, T);
-        
-        err = cudaGetLastError();
-        if  (cudaSuccess != err){
-                cerr << "Error " << cudaGetErrorString(err) << endl;
-                break;
-        } else {
-                cerr << "No kernel error detected" << endl;
-        }
-        printf("resampled\n");
 
         // std::vector<float> v_X(std::begin(host_X), std::end(host_X)); // c++ 11
         // std::vector<float> v_accu_time(std::begin(host_accu_time), std::end(host_accu_time));
@@ -151,14 +140,6 @@ int main (int argc, char** argv) {
 
         // run a reduction kernel to find the minimum accumulate time       
         cudaCallFindMinKernel(blocks, threadsPerBlock, dev_accu_time, dev_min_time, N);
-        
-        err = cudaGetLastError();
-        if  (cudaSuccess != err){
-                cerr << "Error " << cudaGetErrorString(err) << endl;
-                break;
-        } else {
-                cerr << "No kernel error detected" << endl; 
-        }
         
 
         gpuErrchk(cudaMemcpy(host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost));
