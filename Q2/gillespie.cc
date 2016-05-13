@@ -114,7 +114,7 @@ int main (int argc, char** argv) {
         // calculates state, X concentration, timestep, accumulate time
         cudaCallGillKernel(blocks, threadsPerBlock, dev_points, state, dev_X, dev_timestep, dev_accu_time, N);
         float* test = (float*)malloc(N * sizeof(float));
-        gpuErrchk(cudaMemcpy(test, dev_timestep, N * sizeof(float), cudaMemcpyDeviceToHost));
+        gpuErrchk(cudaMemcpy(test, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost));
         for (int i = 0; i < N; ++i) {
             printf("this time step: %f\n", test[i]);
         }
