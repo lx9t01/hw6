@@ -163,6 +163,7 @@ int main (int argc, char** argv) {
         printf("min get\n");
         cudaMemcpy(&host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost);
         printf("%f\n", host_min_time);
+        curandDestroyGenerator(gen);
 
         // delete[] host_X;
         // delete[] host_accu_time;
@@ -175,7 +176,6 @@ int main (int argc, char** argv) {
 
     // //
     // fclose(outputFile);
-    curandDestroyGenerator(gen);
     cudaFree(state);
     cudaFree(dev_X);
     cudaFree(dev_points);
