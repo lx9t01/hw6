@@ -90,11 +90,11 @@ int main (int argc, char** argv) {
     float* resamp_X = new float[N*T]();
 
     float* dev_resample_X;
-    cudaMalloc((void**)&dev_resample_X, N * sizeof(float));
+    cudaMalloc((void**)&dev_resample_X, N * T * sizeof(float));
     // the matrix to mark if a time point has been ipdated
     int* is_resampled = new int[N*T]();
     int* dev_is_resampled;
-    cudaMalloc((void**)&dev_is_resampled, N * sizeof(float));
+    cudaMalloc((void**)&dev_is_resampled, N * T * sizeof(float));
 
     const float final_time = 100;
     curandSetPseudoRandomGeneratorSeed(gen, 1234); 
@@ -180,6 +180,8 @@ int main (int argc, char** argv) {
     cudaFree(dev_timestep);
     cudaFree(dev_accu_time);
     cudaFree(dev_min_time);
+    delete[] resamp_X;
+    delete[] is_resampled;
 
     // delete[](host_X);
 
