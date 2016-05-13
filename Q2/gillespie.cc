@@ -11,6 +11,8 @@
 #include <cuda_runtime.h>
 #include <algorithm>
 #include <cassert>
+#include <curand.h>
+#include <curand_kernel.h>
 
 #include "gillespie_cuda.cuh"
 
