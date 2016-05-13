@@ -36,6 +36,11 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=t
     }
 }
 
+#define CURAND_CALL(x) do { if((x) != CURAND_STATUS_SUCCESS) { \
+    printf("Error at %s:%d\n",__FILE__,__LINE__);            \
+    return EXIT_FAILURE;}} while(0)
+
+
 
 void check_args(int argc, char **argv){
     if (argc != 3){
@@ -97,19 +102,13 @@ int main (int argc, char** argv) {
     cudaMalloc((void**)&dev_is_resampled, N * T * sizeof(float));
 
     const float final_time = 100;
-    curandSetPseudoRandomGeneratorSeed(gen, 1234); 
+    curandSetPseudoRandomGeneratorSeed(gen, 1234);
+    cudaError err; 
 
     while (host_min_time <= final_time) {
-        curandGenerateUniform(gen, dev_points, rand_number);
+        CURAND_CALL(curandGenerateUniform(gen, dev_points, rand_number));
         printf("rand number generated\n");
-        cudaError err = cudaGetLastError();
-        if  (cudaSuccess != err){
-                cerr << "Error " << cudaGetErrorString(err) << endl;
-                break;
-        } else {
-                cerr << "No kernel error detected" << endl;
-                
-        }
+
         printf("Gill kernel called\n");
         // for each iteration, call a kernel
         // calculates state, X concentration, timestep, accumulate time
