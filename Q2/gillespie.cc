@@ -17,9 +17,9 @@
 #include "gillespie_cuda.cuh"
 
 
-// using std::cerr;
-// using std::cout;
-// using std::endl;
+using std::cerr;
+using std::cout;
+using std::endl;
 
 /*
 Modified from:
@@ -105,7 +105,7 @@ int main (int argc, char** argv) {
         // for each iteration, call a kernel
         // calculates state, X concentration, timestep, accumulate time
         cudaCallGillKernel(blocks, threadsPerBlock, dev_points, state, dev_X, dev_timestep, dev_accu_time, N);
-        err = cudaGetLastError();
+        cudaError err = cudaGetLastError();
         if  (cudaSuccess != err){
                 cerr << "Error " << cudaGetErrorString(err) << endl;
         } else {
@@ -122,7 +122,7 @@ int main (int argc, char** argv) {
         // cudaMemcpy(host_accu_time, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
 
         cudaCallResampleKernel(blocks, threadsPerBlock, dev_resample_X, dev_is_resampled, dev_X, dev_accu_time, N, T);
-        err = cudaGetLastError();
+        cudaError err = cudaGetLastError();
         if  (cudaSuccess != err){
                 cerr << "Error " << cudaGetErrorString(err) << endl;
         } else {
@@ -137,7 +137,7 @@ int main (int argc, char** argv) {
 
         // run a reduction kernel to find the minimum accumulate time       
         cudaCallFindMinKernel(blocks, threadsPerBlock, dev_accu_time, dev_min_time, N);
-        err = cudaGetLastError();
+        cudaError err = cudaGetLastError();
         if  (cudaSuccess != err){
                 cerr << "Error " << cudaGetErrorString(err) << endl;
         } else {
