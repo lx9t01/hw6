@@ -233,7 +233,7 @@ int main (int argc, char** argv) {
     cudaFree(dev_timestep);
     cudaFree(dev_accu_time);
     cudaFree(dev_min_time);
-    free resamp_X;
+    free(resamp_X);
 
 
     return EXIT_SUCCESS;
