@@ -83,7 +83,7 @@ void cudaFindMinKernel (
     unsigned int idx = threadIdx.x + blockIdx.x * blockDim.x;
     __shared__ float data[blockDim.x]; // rememeber to update this !!!!!!!
     if(idx == 0) {
-        for (int i = 0; i < blockDIm.x; ++i) {
+        for (int i = 0; i < blockDim.x; ++i) {
             data[i] = 9999;
         }
     }
