@@ -164,10 +164,12 @@ int main (int argc, char** argv) {
         // gpuErrchk(cudaMemcpy(host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost));
         printf("min get\n");
         printf("this min: %f\n", *host_min_time);
+        free(test);
+        free(test_accu);
     }
     cudaMemcpy(resamp_X, dev_resample_X, N*T*sizeof(float), cudaMemcpyDeviceToHost);
     for (int i = 0; i < N * T; ++i) {
-        printf("%f\n", resamp_X[i]);
+        // printf("%f\n", resamp_X[i]);
     }
 
     // find the mean and var
