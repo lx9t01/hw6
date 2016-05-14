@@ -38,7 +38,7 @@ __global__
 void cudaGillKernel(const float* dev_points,
     const float* dev_points_2,
     float* state,
-    float* X, 
+    int* X, 
     float* dev_timestep,
     float* dev_accu_time,
     const int N) {
@@ -113,9 +113,9 @@ void cudaFindMinKernel (
 
 __global__
 void cudaResampleKernel(
-    float* dev_resample_X, 
+    int* dev_resample_X, 
     int* dev_is_resampled, 
-    const float* dev_X, 
+    const int* dev_X, 
     const float* dev_accu_time, 
     const int N, 
     const int T) {
@@ -141,7 +141,7 @@ void cudaCallGillKernel(const int blocks,
     const float* dev_points, 
     const float* dev_points_2, 
     float* state,
-    float* X, 
+    int* X, 
     float* dev_timestep,
     float* dev_accu_time,
     const int N) {
@@ -159,9 +159,9 @@ void cudaCallFindMinKernel(const int blocks,
 
 void cudaCallResampleKernel(const int blocks, 
     const int threadsPerBlock, 
-    float* dev_resample_X, 
+    int* dev_resample_X, 
     int* dev_is_resampled, 
-    const float* dev_X, 
+    const int* dev_X, 
     const float* dev_accu_time, 
     const int N, 
     const int T) {
