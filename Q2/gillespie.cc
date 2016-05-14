@@ -151,7 +151,7 @@ int main (int argc, char** argv) {
         // float* host_accu_time = new float[N]();
         // cudaMemcpy(host_accu_time, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
 
-        cudaCallResampleKernel(blocks, threadsPerBlock, dev_resample_X, dev_is_resampled, dev_X, dev_accu_time, N, T);
+        // cudaCallResampleKernel(blocks, threadsPerBlock, dev_resample_X, dev_is_resampled, dev_X, dev_accu_time, N, T);
         err = cudaGetLastError();
         if  (cudaSuccess != err){
             cerr << "Error " << cudaGetErrorString(err) << endl;
