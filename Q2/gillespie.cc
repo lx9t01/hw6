@@ -165,14 +165,29 @@ int main (int argc, char** argv) {
         printf("min get\n");
         printf("this min: %f\n", *host_min_time);
     }
+    cudaMemcpy(resamp_X, dev_resample_X, N*T*sizeof(float), cudaMemcpyDeviceToHost);
 
-    // FILE *outputFile = fopen("output.txt", "w");
-    // for (int i = 0; i < T; ++i) {
-    //     fprintf(outputFile, "%f ",host_X[i]);
-    // }
+    // find the mean and var
+    float* mean = new float[T]();
+    for (int i = 0; i < T; ++i) {
+        for (int j = 0; j < N; ++j) {
+            mean[i] += resamp_X[j * T + i];
+        }
+        mean[i] /= N;
+    }
 
-    // //
-    // fclose(outputFile);
+
+
+
+
+    FILE *outputFile = fopen("output.txt", "w");
+    for (int i = 0; i < T; ++i) {
+        fprintf(outputFile, "%f ",mean[i]);
+    }
+    fclose(outputFile);
+
+
+    delete mean;
     free(host_min_time);
     cudaFree(state);
     cudaFree(dev_X);
