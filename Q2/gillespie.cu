@@ -38,7 +38,7 @@ __global__
 void cudaGillKernel(const float* dev_points,
     const float* dev_points_2,
     float* state,
-    float* X, 
+    int* X, 
     float* dev_timestep,
     float* dev_accu_time,
     const int N) {
@@ -52,22 +52,24 @@ void cudaGillKernel(const float* dev_points,
     while (idx < N) {
 
         if (state == 0){
-            dev_timestep[idx] = -log(dev_points[idx]) / (kon + X[idx] * g);
+            float lamda = kon + X[idx] * g;
+            dev_timestep[idx] = -logf(dev_points[idx]) / lamda;
             dev_accu_time[idx] += dev_timestep[idx];
-            if (dev_points_2[idx] > kon / (kon + X[idx] * g)) { // if X--
-                X[idx] -= 1.0;
+            if (dev_points_2[idx] > kon / lamda) { // if X--
+                X[idx]--;
             } else { // if OFF --> ON
                 state[idx] = 1;
             }
         } else {
-            dev_timestep[idx] = -log(dev_points[idx]) / (koff + b + X[idx] * g);
+            float lamda = koff + b + X[idx] * g;
+            dev_timestep[idx] = -logf(dev_points[idx]) / lamda;
             dev_accu_time[idx] += dev_timestep[idx];
-            if (dev_points_2[idx] <= koff / (koff + b + X[idx] * g)) { // ON --> OFF
+            if (dev_points_2[idx] <= koff / lamda) { // ON --> OFF
                 state[idx] = 0;
-            } else if (dev_points_2[idx] <= (koff + b) / (koff + b + X[idx] * g)) { // X++
-                X[idx] += 1.0;
+            } else if (dev_points_2[idx] <= (koff + b) / lamda) { // X++
+                X[idx]++;
             } else { // X--
-                X[idx] -= 1.0;
+                X[idx]--;
             }
         }
         idx += blockDim.x * gridDim.x;
@@ -113,9 +115,9 @@ void cudaFindMinKernel (
 
 __global__
 void cudaResampleKernel(
-    float* dev_resample_X, 
+    int* dev_resample_X, 
     int* dev_is_resampled, 
-    const float* dev_X, 
+    const int* dev_X, 
     const float* dev_accu_time, 
     const int N, 
     const int T) {

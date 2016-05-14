@@ -69,13 +69,13 @@ int main (int argc, char** argv) {
     curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT);
 
     float* state;
-    float* dev_X;
+    int* dev_X;
     float* dev_timestep;
 
     cudaMalloc((void**)&state, N * sizeof(float));
     cudaMemset(state, 0, N * sizeof(float));
-    cudaMalloc((void**)&dev_X, N * sizeof(float));
-    cudaMemset(dev_X, 0, N * sizeof(float));
+    cudaMalloc((void**)&dev_X, N * sizeof(int));
+    cudaMemset(dev_X, 0, N * sizeof(int));
     cudaMalloc((void**)&dev_timestep, N * sizeof(float));
     cudaMemset(dev_timestep, 0, N * sizeof(float));
 
@@ -96,11 +96,11 @@ int main (int argc, char** argv) {
     const int T = 1000; // the total time interval after resampling
 
     // the matrix for resampled data
-    float* resamp_X = new float[N * T]();
+    int* resamp_X = new int[N * T]();
 
-    float* dev_resample_X;
-    cudaMalloc((void**)&dev_resample_X, N * T * sizeof(float));
-    cudaMemset(dev_resample_X, 0, N * T * sizeof(float));
+    int* dev_resample_X;
+    cudaMalloc((void**)&dev_resample_X, N * T * sizeof(int));
+    cudaMemset(dev_resample_X, 0, N * T * sizeof(int));
     // the matrix to mark if a time point has been ipdated
     int* is_resampled = new int[N * T]();
     int* dev_is_resampled;
@@ -134,11 +134,11 @@ int main (int argc, char** argv) {
         } else {
             cerr << "gill No kernel error detected" << endl;
         }
-        cudaMemcpy(test, dev_X, N * sizeof(float), cudaMemcpyDeviceToHost);
+        cudaMemcpy(test, dev_X, N * sizeof(int), cudaMemcpyDeviceToHost);
         
         cudaMemcpy(test_accu, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
 
-            printf("this time step, X: %f\n", test[0]);
+            printf("this time step, X: %d\n", test[0]);
             // printf("accu time step: %f\n", test_accu[0]);
         // printf("Gill kernel called\n");
 
@@ -188,12 +188,12 @@ int main (int argc, char** argv) {
     // }
     free(test_accu);
 
-    cudaMemcpy(resamp_X, dev_resample_X, N*T*sizeof(float), cudaMemcpyDeviceToHost);
+    cudaMemcpy(resamp_X, dev_resample_X, N*T*sizeof(int), cudaMemcpyDeviceToHost);
     FILE *total_resample_file = fopen("resample.txt", "w");
 
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < T; ++j) {
-            fprintf(total_resample_file, "%f ", resamp_X[i*T+j]);
+            fprintf(total_resample_file, "%d ", resamp_X[i*T+j]);
         }
         fprintf(total_resample_file, "\n");
     }
