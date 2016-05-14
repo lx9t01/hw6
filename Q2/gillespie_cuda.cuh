@@ -6,8 +6,8 @@
 
 void cudaCallGillKernel(const int blocks,
     const int threadsPerBlock,
-    const float* dev_points, 
-    const float* dev_points_2, 
+    float* dev_points, 
+    float* dev_points_2, 
     float* state,
     float* X, 
     float* dev_timestep,
@@ -16,15 +16,15 @@ void cudaCallGillKernel(const int blocks,
 
 void cudaCallFindMinKernel(const int blocks,
     const int threadsPerBlock,
-    const float* dev_accu_time,
+    float* dev_accu_time,
     float* dev_min_time,
     const int N);
 
 void cudaCallResampleKernel(const int blocks, 
     const int threadsPerBlock, 
     float* dev_resample_X, 
-    const float* dev_X, 
-    const float* dev_accu_time, 
+    float* dev_X, 
+    float* dev_accu_time, 
     const int N, 
     const int T);
 
