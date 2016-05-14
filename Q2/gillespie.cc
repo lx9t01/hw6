@@ -183,6 +183,10 @@ int main (int argc, char** argv) {
         
     }
     free(test);
+    for (int i = 0; i < N; ++i) {
+        printf("%f\n", test_accu[i]);
+    }
+
     free(test_accu);
 
     cudaMemcpy(resamp_X, dev_resample_X, N*T*sizeof(float), cudaMemcpyDeviceToHost);
