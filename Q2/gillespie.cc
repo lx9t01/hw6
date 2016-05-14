@@ -111,6 +111,9 @@ int main (int argc, char** argv) {
     curandSetPseudoRandomGeneratorSeed(gen, 1234);
     cudaError err; 
 
+    float* test = (float*)malloc(N * sizeof(float));
+    float* test_accu = (float*)malloc(N * sizeof(float));
+
     while (*host_min_time <= final_time) {
         CURAND_CALL(curandGenerateUniform(gen, dev_points, N * sizeof(float)));
         CURAND_CALL(curandGenerateUniform(gen, dev_points_2, N * sizeof(float)));
@@ -119,9 +122,9 @@ int main (int argc, char** argv) {
         // for each iteration, call a kernel
         // calculates state, X concentration, timestep, accumulate time
         cudaCallGillKernel(blocks, threadsPerBlock, dev_points, dev_points_2, state, dev_X, dev_timestep, dev_accu_time, N);
-        float* test = (float*)malloc(N * sizeof(float));
+        
         gpuErrchk(cudaMemcpy(test, dev_timestep, N * sizeof(float), cudaMemcpyDeviceToHost));
-        float* test_accu = (float*)malloc(N * sizeof(float));
+        
         gpuErrchk(cudaMemcpy(test_accu, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost));
 
             // printf("this time step: %f\n", test[0]);
@@ -165,9 +168,11 @@ int main (int argc, char** argv) {
         // gpuErrchk(cudaMemcpy(host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost));
         printf("min get ");
         printf("this min: %f\n", *host_min_time);
-        free(test);
-        free(test_accu);
+        
     }
+    free(test);
+    free(test_accu);
+    
     cudaMemcpy(resamp_X, dev_resample_X, N*T*sizeof(float), cudaMemcpyDeviceToHost);
     FILE *total_resample_file = fopen("resample.txt", "w");
 
