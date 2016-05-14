@@ -71,7 +71,6 @@ int main (int argc, char** argv) {
     float* state;
     float* dev_X;
     float* dev_timestep;
-    // float* host_X[] = new float[T*N](); // after each resampling, the data will be stored here
 
     cudaMalloc((void**)&state, N * sizeof(float));
     cudaMemset(state, 0, N * sizeof(float));
@@ -97,14 +96,16 @@ int main (int argc, char** argv) {
     const int T = 1000; // the total time interval after resampling
 
     // the matrix for resampled data
-    float* resamp_X = new float[N*T]();
+    float* resamp_X = new float[N * T]();
 
     float* dev_resample_X;
     cudaMalloc((void**)&dev_resample_X, N * T * sizeof(float));
+    cudaMemset(dev_resample_X, 0, N * T * sizeof(float));
     // the matrix to mark if a time point has been ipdated
-    int* is_resampled = new int[N*T]();
+    int* is_resampled = new int[N * T]();
     int* dev_is_resampled;
-    cudaMalloc((void**)&dev_is_resampled, N * T * sizeof(float));
+    cudaMalloc((void**)&dev_is_resampled, N * T * sizeof(int));
+    cudaMemset(dev_is_resampled, 0, N * T * sizeof(float));
 
     const float final_time = 100;
     curandSetPseudoRandomGeneratorSeed(gen, 1234);
@@ -123,8 +124,8 @@ int main (int argc, char** argv) {
         float* test_accu = (float*)malloc(N * sizeof(float));
         gpuErrchk(cudaMemcpy(test_accu, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost));
 
-            printf("this time step: %f\n", test[0]);
-            printf("accu time step: %f\n", test_accu[0]);
+            // printf("this time step: %f\n", test[0]);
+            // printf("accu time step: %f\n", test_accu[0]);
         // printf("Gill kernel called\n");
 
         // float* host_state = new float[N]();
@@ -212,7 +213,6 @@ int main (int argc, char** argv) {
     delete resamp_X;
     delete is_resampled;
 
-    // delete[](host_X);
 
     return EXIT_SUCCESS;
 }
