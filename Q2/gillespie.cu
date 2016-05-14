@@ -83,7 +83,7 @@ void cudaFindMinKernel (
 
     unsigned int idx = threadIdx.x + blockIdx.x * blockDim.x;
     __shared__ float data[64]; // rememeber to update this !!!!!!!
-    data[threadIdx.x] = threadIdx.x;
+    data[threadIdx.x] = threadIdx.x + 1;
     __syncthreads();
 
     while (idx < N) {
@@ -102,7 +102,7 @@ void cudaFindMinKernel (
         }
         __syncthreads();
     }
-    *min_timestep = 1.0;
+    *min_timestep = data[0];
     // printf("%f\n", min_timestep);
 
 
