@@ -120,7 +120,7 @@ int main (int argc, char** argv) {
         err = cudaGetLastError();
         if  (cudaSuccess != err){
             cerr << "Error " << cudaGetErrorString(err) << endl;
-            break;
+            // break;
         } else {
             cerr << "curand No kernel error detected" << endl;
         }
@@ -130,13 +130,13 @@ int main (int argc, char** argv) {
         err = cudaGetLastError();
         if  (cudaSuccess != err){
             cerr << "Error " << cudaGetErrorString(err) << endl;
-            break;
+            // break;
         } else {
             cerr << "gill No kernel error detected" << endl;
         }
-        gpuErrchk(cudaMemcpy(test, dev_timestep, N * sizeof(float), cudaMemcpyDeviceToHost));
+        cudaMemcpy(test, dev_timestep, N * sizeof(float), cudaMemcpyDeviceToHost);
         
-        gpuErrchk(cudaMemcpy(test_accu, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost));
+        cudaMemcpy(test_accu, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
 
             // printf("this time step: %f\n", test[0]);
             // printf("accu time step: %f\n", test_accu[0]);
@@ -155,7 +155,7 @@ int main (int argc, char** argv) {
         err = cudaGetLastError();
         if  (cudaSuccess != err){
             cerr << "Error " << cudaGetErrorString(err) << endl;
-            break;
+            // break;
         } else {
             cerr << "resemple No kernel error detected" << endl;
         }
