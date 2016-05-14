@@ -111,7 +111,7 @@ int main (int argc, char** argv) {
     curandSetPseudoRandomGeneratorSeed(gen, 1234);
     cudaError err; 
 
-    int* test = (float*)malloc(N * sizeof(float));
+    float* test = (float*)malloc(N * sizeof(float));
     float* test_accu = (float*)malloc(N * sizeof(float));
 
     while (*host_min_time <= final_time) {
@@ -124,6 +124,8 @@ int main (int argc, char** argv) {
         } else {
             cerr << "curand No kernel error detected" << endl;
         }
+        cudaMemcpy(test, dev_X, N * sizeof(float), cudaMemcpyDeviceToHost);
+        printf("before kernel, X: %f\n", test[0]);
         // for each iteration, call a kernel
         // calculates state, X concentration, timestep, accumulate time
         cudaCallGillKernel(blocks, threadsPerBlock, dev_points, dev_points_2, state, dev_X, dev_timestep, dev_accu_time, N);
@@ -138,7 +140,7 @@ int main (int argc, char** argv) {
         
         cudaMemcpy(test_accu, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
 
-            printf("this time step, X: %d\n", test[0]);
+        printf("after kernel, X: %f\n", test[0]);
             // printf("accu time step: %f\n", test_accu[0]);
         // printf("Gill kernel called\n");
 
@@ -151,7 +153,7 @@ int main (int argc, char** argv) {
         // float* host_accu_time = new float[N]();
         // cudaMemcpy(host_accu_time, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
 
-        cudaCallResampleKernel(blocks, threadsPerBlock, dev_resample_X, dev_is_resampled, dev_X, dev_accu_time, N, T);
+        cudaCallResampleKernel(blocks, threadsPerBlock, dev_resample_X, dev_X, dev_accu_time, N, T);
         
         // std::vector<float> v_X(std::begin(host_X), std::end(host_X)); // c++ 11
         // std::vector<float> v_accu_time(std::begin(host_accu_time), std::end(host_accu_time));
@@ -180,7 +182,7 @@ int main (int argc, char** argv) {
 
         printf("min get ");
         printf("this min: %f\n", *host_min_time);
-        
+        getchar();
     }
     free(test);
     // for (int i = 0; i < N; ++i) {
@@ -231,7 +233,6 @@ int main (int argc, char** argv) {
     cudaFree(dev_accu_time);
     cudaFree(dev_min_time);
     delete resamp_X;
-    delete is_resampled;
 
 
     return EXIT_SUCCESS;
