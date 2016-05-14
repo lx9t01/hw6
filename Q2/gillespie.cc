@@ -159,24 +159,24 @@ int main (int argc, char** argv) {
         // vector_X.push_back(v_X);
         // vector_accu_time.push_back(v_accu_time);
 
-        // run a reduction kernel to find the minimum accumulate time       
-        // cudaCallFindMinKernel(blocks, threadsPerBlock, dev_accu_time, dev_min_time, N);
-        // err = cudaGetLastError();
-        // if  (cudaSuccess != err){
-        //     cerr << "Error " << cudaGetErrorString(err) << endl;
-        //     // break;
-        // } else {
-        //     cerr << "resemple No kernel error detected" << endl;
-        // }
-        // gpuErrchk(cudaMemcpy(host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost));
-
-        float new_min = 99999;
-        for (int i = 0; i < N; ++i) {
-            if (test_accu[i] < new_min) {
-                new_min = test_accu[i];
-            }
+        run a reduction kernel to find the minimum accumulate time       
+        cudaCallFindMinKernel(blocks, threadsPerBlock, dev_accu_time, dev_min_time, N);
+        err = cudaGetLastError();
+        if  (cudaSuccess != err){
+            cerr << "Error " << cudaGetErrorString(err) << endl;
+            // break;
+        } else {
+            cerr << "resemple No kernel error detected" << endl;
         }
-        *host_min_time = new_min;
+        gpuErrchk(cudaMemcpy(host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost));
+
+        // float new_min = 99999;
+        // for (int i = 0; i < N; ++i) {
+        //     if (test_accu[i] < new_min) {
+        //         new_min = test_accu[i];
+        //     }
+        // }
+        // *host_min_time = new_min;
 
         printf("min get ");
         printf("this min: %f\n", *host_min_time);
