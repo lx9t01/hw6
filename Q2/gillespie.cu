@@ -98,7 +98,7 @@ void cudaFindMinKernel (
     __syncthreads();
 
     int l = blockDim.x;
-    while (l > 1) {
+    while (l >= 1) {
         l /= 2;
         if (threadIdx.x < l) {
             data[threadIdx.x] = (data[threadIdx.x]<data[threadIdx.x + l])? data[threadIdx.x]:data[threadIdx.x + l];
