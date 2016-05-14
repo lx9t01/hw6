@@ -125,8 +125,6 @@ int main (int argc, char** argv) {
 
             // printf("this time step: %f\n", test[0]);
             // printf("accu time step: %f\n", test_accu[0]);
-        
-
         printf("Gill kernel called\n");
 
         // float* host_state = new float[N]();
