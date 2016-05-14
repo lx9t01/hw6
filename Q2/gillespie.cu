@@ -102,7 +102,7 @@ void cudaFindMinKernel (
         }
         __syncthreads();
     }
-    *min_timestep = data[0];
+    *min_timestep = 1.0;
     // printf("%f\n", min_timestep);
 
 
