@@ -105,7 +105,7 @@ int main (int argc, char** argv) {
     int* is_resampled = new int[N * T]();
     int* dev_is_resampled;
     cudaMalloc((void**)&dev_is_resampled, N * T * sizeof(int));
-    cudaMemset(dev_is_resampled, 0, N * T * sizeof(float));
+    cudaMemset(dev_is_resampled, 0, N * T * sizeof(int));
 
     const float final_time = 100;
     curandSetPseudoRandomGeneratorSeed(gen, 1234);
@@ -151,7 +151,7 @@ int main (int argc, char** argv) {
         // float* host_accu_time = new float[N]();
         // cudaMemcpy(host_accu_time, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
 
-        // cudaCallResampleKernel(blocks, threadsPerBlock, dev_resample_X, dev_is_resampled, dev_X, dev_accu_time, N, T);
+        cudaCallResampleKernel(blocks, threadsPerBlock, dev_resample_X, dev_is_resampled, dev_X, dev_accu_time, N, T);
         
         // std::vector<float> v_X(std::begin(host_X), std::end(host_X)); // c++ 11
         // std::vector<float> v_accu_time(std::begin(host_accu_time), std::end(host_accu_time));
@@ -183,10 +183,9 @@ int main (int argc, char** argv) {
         
     }
     free(test);
-    for (int i = 0; i < N; ++i) {
-        printf("%f\n", test_accu[i]);
-    }
-
+    // for (int i = 0; i < N; ++i) {
+    //     printf("%f\n", test_accu[i]);
+    // }
     free(test_accu);
 
     cudaMemcpy(resamp_X, dev_resample_X, N*T*sizeof(float), cudaMemcpyDeviceToHost);
