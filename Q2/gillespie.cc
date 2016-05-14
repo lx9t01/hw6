@@ -129,9 +129,9 @@ int main (int argc, char** argv) {
         } else {
             cerr << "No kernel error detected" << endl;
         }
-        gpuErrchk(cudaMemcpy(test, dev_timestep, N * sizeof(float), cudaMemcpyDeviceToHost));
+        cudaMemcpy(test, dev_timestep, N * sizeof(float), cudaMemcpyDeviceToHost);
         
-        gpuErrchk(cudaMemcpy(test_accu, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost));
+        cudaMemcpy(test_accu, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
 
             // printf("this time step: %f\n", test[0]);
             // printf("accu time step: %f\n", test_accu[0]);
@@ -172,7 +172,7 @@ int main (int argc, char** argv) {
     }
     free(test);
     free(test_accu);
-    
+
     cudaMemcpy(resamp_X, dev_resample_X, N*T*sizeof(float), cudaMemcpyDeviceToHost);
     FILE *total_resample_file = fopen("resample.txt", "w");
 
