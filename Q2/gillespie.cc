@@ -122,7 +122,13 @@ int main (int argc, char** argv) {
         // for each iteration, call a kernel
         // calculates state, X concentration, timestep, accumulate time
         cudaCallGillKernel(blocks, threadsPerBlock, dev_points, dev_points_2, state, dev_X, dev_timestep, dev_accu_time, N);
-        
+        err = cudaGetLastError();
+        if  (cudaSuccess != err){
+            cerr << "Error " << cudaGetErrorString(err) << endl;
+            break;
+        } else {
+            cerr << "No kernel error detected" << endl;
+        }
         gpuErrchk(cudaMemcpy(test, dev_timestep, N * sizeof(float), cudaMemcpyDeviceToHost));
         
         gpuErrchk(cudaMemcpy(test_accu, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost));
@@ -150,13 +156,7 @@ int main (int argc, char** argv) {
 
         // run a reduction kernel to find the minimum accumulate time       
         // cudaCallFindMinKernel(blocks, threadsPerBlock, dev_accu_time, dev_min_time, N);
-        // err = cudaGetLastError();
-        // if  (cudaSuccess != err){
-        //     cerr << "Error " << cudaGetErrorString(err) << endl;
-        //     break;
-        // } else {
-        //     cerr << "No kernel error detected" << endl;
-        // }
+        
         float new_min = 99999;
         for (int i = 0; i < N; ++i) {
             if (test_accu[i] < new_min) {
