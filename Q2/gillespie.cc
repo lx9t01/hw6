@@ -147,7 +147,7 @@ int main (int argc, char** argv) {
         // vector_accu_time.push_back(v_accu_time);
 
         // run a reduction kernel to find the minimum accumulate time       
-        cudaCallFindMinKernel(blocks, threadsPerBlock, dev_accu_time, dev_min_time, N);
+        gpuErrchk(cudaCallFindMinKernel(blocks, threadsPerBlock, dev_accu_time, dev_min_time, N));
         // float new_min = 99999;
         // for (int i = 0; i < N; ++i) {
         //     if (test_accu[i] < new_min) {
