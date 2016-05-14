@@ -84,10 +84,13 @@ void cudaFindMinKernel (
     unsigned int idx = threadIdx.x + blockIdx.x * blockDim.x;
     __shared__ float data[64]; // rememeber to update this !!!!!!!
 
+    while (threadIdx.x < 64) {
+        data[threadIdx.x] = 99999;
+    }
+    __syncthreads();
+
     while (idx < N) {
-        if (data[threadIdx.x] < 0.0001) {
-            data[threadIdx.x] = 99999;
-        } else {
+        {
             atomicMin(&data[threadIdx.x], dev_timestep[idx]);
         }
         idx += blockDim.x * gridDim.x;
