@@ -123,11 +123,17 @@ void cudaResampleKernel(
     unsigned int idx = threadIdx.x + blockIdx.x * blockDim.x;
     while (idx < N) {
         int i = (int)(dev_accu_time[idx] * 10);
-        while (dev_is_resampled[idx * T + i] == 0 && i >= 0 && i < T) {
-            dev_is_resampled[idx * T + i] = 1;
-            dev_resample_X[idx * T + i] = dev_X[idx];
-            i--;
+        for (int j = 0; j < i; ++j) {
+            if (dev_is_resampled[idx * T + j] == 0) {
+                dev_is_resampled[idx * T + j] = 1;
+                dev_resample_X[idx * T + j] = dev_X[idx];
+            }
         }
+        // while (dev_is_resampled[idx * T + i] == 0 && i >= 0 && i < T) {
+        //     dev_is_resampled[idx * T + i] = 1;
+        //     dev_resample_X[idx * T + i] = dev_X[idx];
+        //     i--;
+        // }
         idx += blockDim.x * gridDim.x;
     }
 }
