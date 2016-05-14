@@ -168,9 +168,17 @@ int main (int argc, char** argv) {
         free(test_accu);
     }
     cudaMemcpy(resamp_X, dev_resample_X, N*T*sizeof(float), cudaMemcpyDeviceToHost);
-    for (int i = 0; i < N * T; ++i) {
-        // printf("%f\n", resamp_X[i]);
+    FILE *total_resample_file = fopen("resample.txt", "w");
+
+    for (int i = 0; i < N ++i) {
+        for (int j = 0; j < T; ++j) {
+            fprintf(total_resample_file, "%f ", resamp_X[i*T+j]);
+        }
+        fprintf(total_resample_file, "\n");
     }
+
+
+    fclose(total_resample_file);
 
     // find the mean and var
     float* mean = new float[T]();
