@@ -114,7 +114,7 @@ int main (int argc, char** argv) {
         CURAND_CALL(curandGenerateUniform(gen, dev_points, N * sizeof(float)));
         CURAND_CALL(curandGenerateUniform(gen, dev_points_2, N * sizeof(float)));
 
-        printf("rand number generated\n");
+        // printf("rand number generated\n");
         // for each iteration, call a kernel
         // calculates state, X concentration, timestep, accumulate time
         cudaCallGillKernel(blocks, threadsPerBlock, dev_points, dev_points_2, state, dev_X, dev_timestep, dev_accu_time, N);
@@ -123,9 +123,9 @@ int main (int argc, char** argv) {
         float* test_accu = (float*)malloc(N * sizeof(float));
         gpuErrchk(cudaMemcpy(test_accu, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost));
 
-            // printf("this time step: %f\n", test[0]);
-            // printf("accu time step: %f\n", test_accu[0]);
-        printf("Gill kernel called\n");
+            printf("this time step: %f\n", test[0]);
+            printf("accu time step: %f\n", test_accu[0]);
+        // printf("Gill kernel called\n");
 
         // float* host_state = new float[N]();
         // float* host_X = new float[N](); // TODO destruct!!!!!!!!!!!!!!!
@@ -162,7 +162,7 @@ int main (int argc, char** argv) {
         *host_min_time = new_min;
 
         // gpuErrchk(cudaMemcpy(host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost));
-        printf("min get\n");
+        printf("min get ");
         printf("this min: %f\n", *host_min_time);
         free(test);
         free(test_accu);
