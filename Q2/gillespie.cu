@@ -55,7 +55,7 @@ void cudaGillKernel(const float* dev_points,
             dev_timestep[idx] = -log(dev_points[idx]) / (kon + X[idx] * g);
             dev_accu_time[idx] += dev_timestep[idx];
             if (dev_points_2[idx] > kon / (kon + X[idx] * g)) { // if X--
-                X[idx]--;
+                X[idx] -= 1.0;
             } else { // if OFF --> ON
                 state[idx] = 1;
             }
@@ -65,9 +65,9 @@ void cudaGillKernel(const float* dev_points,
             if (dev_points_2[idx] <= koff / (koff + b + X[idx] * g)) { // ON --> OFF
                 state[idx] = 0;
             } else if (dev_points_2[idx] <= (koff + b) / (koff + b + X[idx] * g)) { // X++
-                X[idx]++;
+                X[idx] += 1.0;
             } else { // X--
-                X[idx]--;
+                X[idx] -= 1.0;
             }
         }
         idx += blockDim.x * gridDim.x;
@@ -122,7 +122,7 @@ void cudaResampleKernel(
     // TODO
     unsigned int idx = threadIdx.x + blockIdx.x * blockDim.x;
     while (idx < N) {
-        int i = (int)(dev_accu_time[idx] * 10);
+        int i = floorf(dev_accu_time[idx] * 10);
         for (int j = 0; j < i && j < T; ++j) {
             if (dev_is_resampled[idx * T + j] == 0) {
                 dev_is_resampled[idx * T + j] = 1;
