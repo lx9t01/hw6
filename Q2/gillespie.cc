@@ -161,7 +161,7 @@ int main (int argc, char** argv) {
         }
         *host_min_time = new_min;
 
-        gpuErrchk(cudaMemcpy(host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost));
+        // gpuErrchk(cudaMemcpy(host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost));
         printf("min get\n");
         printf("this min: %f\n", *host_min_time);
     }
