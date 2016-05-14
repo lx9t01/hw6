@@ -111,7 +111,7 @@ int main (int argc, char** argv) {
     curandSetPseudoRandomGeneratorSeed(gen, 1234);
     cudaError err; 
 
-    float* test = (float*)malloc(N * sizeof(float));
+    int* test = (int*)malloc(N * sizeof(int));
     float* test_accu = (float*)malloc(N * sizeof(float));
 
     while (*host_min_time <= final_time) {
