@@ -62,8 +62,8 @@ int main (int argc, char** argv) {
 
     const int N = 100; // each iteration there is N simulations running
 
-    // cudaMalloc((void**)&dev_points, N * sizeof(float));
-    // cudaMalloc((void**)&dev_points_2, N * sizeof(float));
+    cudaMalloc((void**)&dev_points, N * sizeof(float));
+    cudaMalloc((void**)&dev_points_2, N * sizeof(float));
 
     curandGenerator_t gen;
     curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT);
@@ -96,7 +96,7 @@ int main (int argc, char** argv) {
     const int T = 1000; // the total time interval after resampling
 
     // the matrix for resampled data
-    float* resamp_X = new float[N * T]();
+    float* resamp_X = (float*)malloc(N * T * sizeof(float));
 
     float* dev_resample_X;
     cudaMalloc((void**)&dev_resample_X, N * T * sizeof(float));
@@ -233,7 +233,7 @@ int main (int argc, char** argv) {
     cudaFree(dev_timestep);
     cudaFree(dev_accu_time);
     cudaFree(dev_min_time);
-    delete resamp_X;
+    free resamp_X;
 
 
     return EXIT_SUCCESS;
