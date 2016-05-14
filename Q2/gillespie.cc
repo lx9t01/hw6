@@ -170,7 +170,7 @@ int main (int argc, char** argv) {
     cudaMemcpy(resamp_X, dev_resample_X, N*T*sizeof(float), cudaMemcpyDeviceToHost);
     FILE *total_resample_file = fopen("resample.txt", "w");
 
-    for (int i = 0; i < N ++i) {
+    for (int i = 0; i < N; ++i) {
         for (int j = 0; j < T; ++j) {
             fprintf(total_resample_file, "%f ", resamp_X[i*T+j]);
         }
