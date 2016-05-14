@@ -134,11 +134,11 @@ int main (int argc, char** argv) {
         } else {
             cerr << "gill No kernel error detected" << endl;
         }
-        cudaMemcpy(test, dev_timestep, N * sizeof(float), cudaMemcpyDeviceToHost);
+        cudaMemcpy(test, dev_X, N * sizeof(float), cudaMemcpyDeviceToHost);
         
         cudaMemcpy(test_accu, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
 
-            // printf("this time step: %f\n", test[0]);
+            printf("this time step, X: %f\n", test[0]);
             // printf("accu time step: %f\n", test_accu[0]);
         // printf("Gill kernel called\n");
 
