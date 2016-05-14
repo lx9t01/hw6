@@ -16,7 +16,7 @@ __device__ static float atomicMin(float* address, float val)
     } while (assumed != old);
     return __int_as_float(old);
 }
-
+/*
 __device__ static float atomicMax(float* address, float val)
 {
     int* address_as_i = (int*) address;
@@ -28,6 +28,7 @@ __device__ static float atomicMax(float* address, float val)
     } while (assumed != old);
     return __int_as_float(old);
 }
+*/
 
 
 // a single iteration of the Gillespie algorithm on 
@@ -102,7 +103,7 @@ void cudaFindMinKernel (
         __syncthreads();
     }
     if (threadIdx.x == 0) {
-        min_timestep = data[0];
+        *min_timestep = data[0];
         __syncthreads();
     }
     // printf("%f\n", min_timestep);
