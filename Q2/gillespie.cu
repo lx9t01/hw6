@@ -51,7 +51,7 @@ void cudaGillKernel(float* dev_points,
     unsigned int idx = threadIdx.x + blockIdx.x * blockDim.x;
     while (idx < N) {
 
-        if (state[idx] == 0){
+        if (state[idx] < 0.5){
             float lamda = kon + X[idx] * g;
             dev_timestep[idx] = -logf(dev_points[idx]) / lamda;
             dev_accu_time[idx] += dev_timestep[idx];

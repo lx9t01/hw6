@@ -73,10 +73,11 @@ int main (int argc, char** argv) {
     float* dev_timestep;
 
     cudaMalloc((void**) &state, N * sizeof(float));
-    cudaMemset(state, 0, N * sizeof(float));
     cudaMalloc((void**) &dev_concentration, N * sizeof(float));
-    cudaMemset(dev_concentration, 0, N * sizeof(float));
     cudaMalloc((void**) &dev_timestep, N * sizeof(float));
+
+    cudaMemset(state, 0, N * sizeof(float));
+    cudaMemset(dev_concentration, 0, N * sizeof(float));
     cudaMemset(dev_timestep, 0, N * sizeof(float));
 
     float* dev_accu_time;
