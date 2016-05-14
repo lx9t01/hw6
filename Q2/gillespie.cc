@@ -147,16 +147,16 @@ int main (int argc, char** argv) {
         // vector_accu_time.push_back(v_accu_time);
 
         // run a reduction kernel to find the minimum accumulate time       
-        // cudaCallFindMinKernel(blocks, threadsPerBlock, dev_accu_time, dev_min_time, N);
-        float new_min = 99999;
-        for (int i = 0; i < N; ++i) {
-            if (test_accu[i] < new_min) {
-                new_min = test_accu[i];
-            }
-        }
-        *host_min_time = new_min;
+        cudaCallFindMinKernel(blocks, threadsPerBlock, dev_accu_time, dev_min_time, N);
+        // float new_min = 99999;
+        // for (int i = 0; i < N; ++i) {
+        //     if (test_accu[i] < new_min) {
+        //         new_min = test_accu[i];
+        //     }
+        // }
+        // *host_min_time = new_min;
 
-        // gpuErrchk(cudaMemcpy(host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost));
+        gpuErrchk(cudaMemcpy(host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost));
         printf("min get\n");
         printf("this min: %f\n", *host_min_time);
     }
