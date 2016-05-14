@@ -69,13 +69,13 @@ int main (int argc, char** argv) {
     curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT);
 
     float* state;
-    float* dev_X;
+    float* dev_concentration;
     float* dev_timestep;
 
     cudaMalloc((void**)&state, N * sizeof(float));
     cudaMemset(state, 0, N * sizeof(float));
-    cudaMalloc((void**)&dev_X, N * sizeof(float));
-    cudaMemset(dev_X, 0.0, N * sizeof(float));
+    cudaMalloc((void**)&dev_concentration, N * sizeof(float));
+    cudaMemset(dev_concentration, 0.0, N * sizeof(float));
     cudaMalloc((void**)&dev_timestep, N * sizeof(float));
     cudaMemset(dev_timestep, 0, N * sizeof(float));
 
@@ -113,7 +113,7 @@ int main (int argc, char** argv) {
 
     float* test = (float*)malloc(N * sizeof(float));
     float* test_accu = (float*)malloc(N * sizeof(float));
-    cudaMemcpy(test, dev_X, N * sizeof(float), cudaMemcpyDeviceToHost);
+    cudaMemcpy(test, dev_concentration, N * sizeof(float), cudaMemcpyDeviceToHost);
     printf("before kernel, X: %f\n", test[0]);
     while (*host_min_time <= final_time) {
         CURAND_CALL(curandGenerateUniform(gen, dev_points, N * sizeof(float)));
@@ -125,11 +125,11 @@ int main (int argc, char** argv) {
         } else {
             cerr << "curand No kernel error detected" << endl;
         }
-        cudaMemcpy(test, dev_X, N * sizeof(float), cudaMemcpyDeviceToHost);
+        cudaMemcpy(test, dev_concentration, N * sizeof(float), cudaMemcpyDeviceToHost);
         printf("before kernel, X: %f\n", test[0]);
         // for each iteration, call a kernel
         // calculates state, X concentration, timestep, accumulate time
-        cudaCallGillKernel(blocks, threadsPerBlock, dev_points, dev_points_2, state, dev_X, dev_timestep, dev_accu_time, N);
+        cudaCallGillKernel(blocks, threadsPerBlock, dev_points, dev_points_2, state, dev_concentration, dev_timestep, dev_accu_time, N);
         err = cudaGetLastError();
         if  (cudaSuccess != err){
             cerr << "Error " << cudaGetErrorString(err) << endl;
@@ -137,7 +137,7 @@ int main (int argc, char** argv) {
         } else {
             cerr << "gill No kernel error detected" << endl;
         }
-        cudaMemcpy(test, dev_X, N * sizeof(float), cudaMemcpyDeviceToHost);
+        cudaMemcpy(test, dev_concentration, N * sizeof(float), cudaMemcpyDeviceToHost);
         
         cudaMemcpy(test_accu, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
 
@@ -149,12 +149,12 @@ int main (int argc, char** argv) {
         // float* host_X = new float[N](); // TODO destruct!!!!!!!!!!!!!!!
         // // float* host_timestep = new float[N]();
         // // cudaMemcpy(host_state, state, N * sizeof(float), cudaMemcpyDeviceToHost);
-        // cudaMemcpy(host_X, dev_X, N * sizeof(float), cudaMemcpyDeviceToHost);
+        // cudaMemcpy(host_X, dev_concentration, N * sizeof(float), cudaMemcpyDeviceToHost);
         // // cudaMemcpy(host_timestep, dev_timestep, N * sizeof(float), cudaMemcpyDeviceToHost);
         // float* host_accu_time = new float[N]();
         // cudaMemcpy(host_accu_time, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
 
-        // cudaCallResampleKernel(blocks, threadsPerBlock, dev_resample_X, dev_X, dev_accu_time, N, T);
+        // cudaCallResampleKernel(blocks, threadsPerBlock, dev_resample_X, dev_concentration, dev_accu_time, N, T);
         
         // std::vector<float> v_X(std::begin(host_X), std::end(host_X)); // c++ 11
         // std::vector<float> v_accu_time(std::begin(host_accu_time), std::end(host_accu_time));
@@ -227,7 +227,7 @@ int main (int argc, char** argv) {
     delete mean;
     free(host_min_time);
     cudaFree(state);
-    cudaFree(dev_X);
+    cudaFree(dev_concentration);
     cudaFree(dev_points);
     cudaFree(dev_points_2);
     cudaFree(dev_timestep);
