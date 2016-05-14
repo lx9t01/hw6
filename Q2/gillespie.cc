@@ -153,7 +153,7 @@ int main (int argc, char** argv) {
         // float* host_accu_time = new float[N]();
         // cudaMemcpy(host_accu_time, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
 
-        cudaCallResampleKernel(blocks, threadsPerBlock, dev_resample_X, dev_X, dev_accu_time, N, T);
+        // cudaCallResampleKernel(blocks, threadsPerBlock, dev_resample_X, dev_X, dev_accu_time, N, T);
         
         // std::vector<float> v_X(std::begin(host_X), std::end(host_X)); // c++ 11
         // std::vector<float> v_accu_time(std::begin(host_accu_time), std::end(host_accu_time));
