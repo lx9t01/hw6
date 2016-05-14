@@ -38,7 +38,7 @@ __global__
 void cudaGillKernel(const float* dev_points,
     const float* dev_points_2,
     float* state,
-    int* X, 
+    float* X, 
     float* dev_timestep,
     float* dev_accu_time,
     const int N) {
