@@ -166,6 +166,9 @@ int main (int argc, char** argv) {
         printf("this min: %f\n", *host_min_time);
     }
     cudaMemcpy(resamp_X, dev_resample_X, N*T*sizeof(float), cudaMemcpyDeviceToHost);
+    for (int i = 0; i < N * T; ++i) {
+        printf("%f\n", resamp_X[i]);
+    }
 
     // find the mean and var
     float* mean = new float[T]();
