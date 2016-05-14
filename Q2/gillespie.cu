@@ -84,7 +84,7 @@ void cudaFindMinKernel (
     __shared__ float data[64]; // rememeber to update this !!!!!!!
 
     while (idx < N) {
-        if (data[threadIdx.x] == 0.0) {
+        if (data[threadIdx.x] <= 0.00001) {
             atomicMax(&data[threadIdx.x], dev_timestep[idx]);
         } else {
             atomicMin(&data[threadIdx.x], dev_timestep[idx]);
