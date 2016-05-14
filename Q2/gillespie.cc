@@ -72,15 +72,15 @@ int main (int argc, char** argv) {
     float* dev_concentration;
     float* dev_timestep;
 
-    cudaMalloc((void**)&state, N * sizeof(float));
+    cudaMalloc((void**) &state, N * sizeof(float));
     cudaMemset(state, 0, N * sizeof(float));
-    cudaMalloc((void**)&dev_concentration, N * sizeof(float));
-    cudaMemset(dev_concentration, 0.0, N * sizeof(float));
-    cudaMalloc((void**)&dev_timestep, N * sizeof(float));
+    cudaMalloc((void**) &dev_concentration, N * sizeof(float));
+    cudaMemset(dev_concentration, 0, N * sizeof(float));
+    cudaMalloc((void**) &dev_timestep, N * sizeof(float));
     cudaMemset(dev_timestep, 0, N * sizeof(float));
 
     float* dev_accu_time;
-    cudaMalloc((void**)&dev_accu_time, N * sizeof(float));
+    cudaMalloc((void**) &dev_accu_time, N * sizeof(float));
     cudaMemset(dev_accu_time, 0, N * sizeof(float));
     float* host_min_time = (float*)malloc(1 * sizeof(float));
     memset(host_min_time, 0, 1 * sizeof(float));
@@ -116,8 +116,8 @@ int main (int argc, char** argv) {
     cudaMemcpy(test, dev_concentration, N * sizeof(float), cudaMemcpyDeviceToHost);
     printf("before kernel, X: %f\n", test[0]);
     while (*host_min_time <= final_time) {
-        CURAND_CALL(curandGenerateUniform(gen, dev_points, N * sizeof(float)));
-        CURAND_CALL(curandGenerateUniform(gen, dev_points_2, N * sizeof(float)));
+        curandGenerateUniform(gen, dev_points, N * sizeof(float));
+        curandGenerateUniform(gen, dev_points_2, N * sizeof(float));
         err = cudaGetLastError();
         if  (cudaSuccess != err){
             cerr << "Error " << cudaGetErrorString(err) << endl;
