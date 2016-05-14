@@ -72,6 +72,7 @@ void cudaGillKernel(const float* dev_points,
                 X[idx]--;
             }
         }
+        __syncthreads();
         idx += blockDim.x * gridDim.x;
     }
 }

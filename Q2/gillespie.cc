@@ -113,7 +113,8 @@ int main (int argc, char** argv) {
 
     float* test = (float*)malloc(N * sizeof(float));
     float* test_accu = (float*)malloc(N * sizeof(float));
-
+    cudaMemcpy(test, dev_X, N * sizeof(float), cudaMemcpyDeviceToHost);
+    printf("before kernel, X: %f\n", test[0]);
     while (*host_min_time <= final_time) {
         CURAND_CALL(curandGenerateUniform(gen, dev_points, N * sizeof(float)));
         CURAND_CALL(curandGenerateUniform(gen, dev_points_2, N * sizeof(float)));
