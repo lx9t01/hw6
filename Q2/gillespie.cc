@@ -159,7 +159,7 @@ int main (int argc, char** argv) {
         // vector_X.push_back(v_X);
         // vector_accu_time.push_back(v_accu_time);
 
-        run a reduction kernel to find the minimum accumulate time       
+        // run a reduction kernel to find the minimum accumulate time       
         cudaCallFindMinKernel(blocks, threadsPerBlock, dev_accu_time, dev_min_time, N);
         err = cudaGetLastError();
         if  (cudaSuccess != err){
