@@ -62,8 +62,8 @@ int main (int argc, char** argv) {
 
     const int N = 100; // each iteration there is N simulations running
 
-    cudaMalloc((void**)&dev_points, N * sizeof(float));
-    cudaMalloc((void**)&dev_points_2, N * sizeof(float));
+    // cudaMalloc((void**)&dev_points, N * sizeof(float));
+    // cudaMalloc((void**)&dev_points_2, N * sizeof(float));
 
     curandGenerator_t gen;
     curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT);
