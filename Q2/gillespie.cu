@@ -35,8 +35,8 @@ __device__ static float atomicMax(float* address, float val)
 // the given system using an array of random numbers 
 // given as an argument.
 __global__
-void cudaGillKernel(const float* dev_points,
-    const float* dev_points_2,
+void cudaGillKernel(float* dev_points,
+    float* dev_points_2,
     float* state,
     float* X, 
     float* dev_timestep,
@@ -80,7 +80,7 @@ void cudaGillKernel(const float* dev_points,
 // a kernel to use reduction to find minimum
 __global__
 void cudaFindMinKernel (
-    const float* dev_timestep,
+    float* dev_timestep,
     float* min_timestep, // NEED TO ALLOCATE
     const int N) {
 
@@ -117,8 +117,8 @@ void cudaFindMinKernel (
 __global__
 void cudaResampleKernel(
     float* dev_resample_X, 
-    const float* dev_X, 
-    const float* dev_accu_time, 
+    float* dev_X, 
+    float* dev_accu_time, 
     const int N, 
     const int T) {
     // TODO
@@ -145,8 +145,8 @@ void cudaResampleKernel(
 
 void cudaCallGillKernel(const int blocks,
     const int threadsPerBlock,
-    const float* dev_points, 
-    const float* dev_points_2, 
+    float* dev_points, 
+    float* dev_points_2, 
     float* state,
     float* X, 
     float* dev_timestep,
@@ -157,7 +157,7 @@ void cudaCallGillKernel(const int blocks,
 
 void cudaCallFindMinKernel(const int blocks, 
     const int threadsPerBlock,
-    const float* dev_accu_time,
+    float* dev_accu_time,
     float* dev_min_time,
     const int N) {
     cudaFindMinKernel<<<blocks, threadsPerBlock>>>(dev_accu_time, dev_min_time, N);
@@ -167,8 +167,8 @@ void cudaCallFindMinKernel(const int blocks,
 void cudaCallResampleKernel(const int blocks, 
     const int threadsPerBlock, 
     float* dev_resample_X, 
-    const float* dev_X, 
-    const float* dev_accu_time, 
+    float* dev_X, 
+    float* dev_accu_time, 
     const int N, 
     const int T) {
     cudaResampleKernel<<<blocks, threadsPerBlock>>>(dev_resample_X, dev_X, dev_accu_time, N, T);
