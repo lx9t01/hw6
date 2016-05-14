@@ -60,7 +60,7 @@ int main (int argc, char** argv) {
     float* dev_points; // to determine the timestep
     float* dev_points_2; // to determine the reaction
 
-    const int N = 1000; // each iteration there is N simulations running
+    const int N = 100; // each iteration there is N simulations running
 
     cudaMalloc((void**)&dev_points, N * sizeof(float));
     cudaMalloc((void**)&dev_points_2, N * sizeof(float));
