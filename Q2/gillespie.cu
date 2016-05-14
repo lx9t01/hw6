@@ -115,9 +115,8 @@ void cudaFindMinKernel (
 
 __global__
 void cudaResampleKernel(
-    int* dev_resample_X, 
-    int* dev_is_resampled, 
-    const int* dev_X, 
+    float* dev_resample_X, 
+    const float* dev_X, 
     const float* dev_accu_time, 
     const int N, 
     const int T) {
@@ -126,8 +125,7 @@ void cudaResampleKernel(
     while (idx < N) {
         int i = floorf(dev_accu_time[idx] * 10);
         for (int j = 0; j < i && j < T; ++j) {
-            if (dev_is_resampled[idx * T + j] == 0) {
-                dev_is_resampled[idx * T + j] = 1;
+            if (dev_resample_X[idx * T + j] < 0) {
                 dev_resample_X[idx * T + j] = dev_X[idx];
             }
         }
@@ -167,13 +165,12 @@ void cudaCallFindMinKernel(const int blocks,
 
 void cudaCallResampleKernel(const int blocks, 
     const int threadsPerBlock, 
-    int* dev_resample_X, 
-    int* dev_is_resampled, 
-    const int* dev_X, 
+    float* dev_resample_X, 
+    const float* dev_X, 
     const float* dev_accu_time, 
     const int N, 
     const int T) {
-    cudaResampleKernel<<<blocks, threadsPerBlock>>>(dev_resample_X, dev_is_resampled, dev_X, dev_accu_time, N, T);
+    cudaResampleKernel<<<blocks, threadsPerBlock>>>(dev_resample_X, dev_X, dev_accu_time, N, T);
 }
 
 
