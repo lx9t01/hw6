@@ -89,9 +89,6 @@ int main (int argc, char** argv) {
     float* dev_min_time;
     cudaMalloc((void**)&dev_min_time, 1 * sizeof(float));
 
-    // std::vector< std::vector<float> > vector_X;
-    // std::vector< std::vector<float> > vector_accu_time;
-
 
     // resampling the data in vectors
     const int T = 1000; // the total time interval after resampling
@@ -103,10 +100,6 @@ int main (int argc, char** argv) {
     cudaMalloc((void**)&dev_resample_X, N * T * sizeof(float));
     cudaMemset(dev_resample_X, -1.0, N * T * sizeof(float));
     // the matrix to mark if a time point has been ipdated
-    // int* is_resampled = new int[N * T]();
-    // int* dev_is_resampled;
-    // cudaMalloc((void**)&dev_is_resampled, N * T * sizeof(int));
-    // cudaMemset(dev_is_resampled, 0, N * T * sizeof(int));
 
     const float final_time = 100;
     curandSetPseudoRandomGeneratorSeed(gen, 1234);
@@ -114,8 +107,7 @@ int main (int argc, char** argv) {
 
     float* test = (float*)malloc(N * sizeof(float));
     float* test_accu = (float*)malloc(N * sizeof(float));
-    cudaMemcpy(test, dev_concentration, N * sizeof(float), cudaMemcpyDeviceToHost);
-    printf("before kernel, X: %f\n", test[0]);
+    
     while (*host_min_time <= final_time) {
         curandGenerateUniform(gen, dev_points, N);
         curandGenerateUniform(gen, dev_points_2, N);
@@ -126,8 +118,7 @@ int main (int argc, char** argv) {
         } else {
             cerr << "curand No kernel error detected" << endl;
         }
-        cudaMemcpy(test, dev_concentration, N * sizeof(float), cudaMemcpyDeviceToHost);
-        printf("before kernel, X: %f\n", test[0]);
+        
         // for each iteration, call a kernel
         // calculates state, X concentration, timestep, accumulate time
         cudaCallGillKernel(blocks, threadsPerBlock, dev_points, dev_points_2, state, dev_concentration, dev_timestep, dev_accu_time, N);
@@ -143,25 +134,6 @@ int main (int argc, char** argv) {
         cudaMemcpy(test_accu, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
 
         printf("after kernel, X: %f\n", test[0]);
-            // printf("accu time step: %f\n", test_accu[0]);
-        // printf("Gill kernel called\n");
-
-        // float* host_state = new float[N]();
-        // float* host_X = new float[N](); // TODO destruct!!!!!!!!!!!!!!!
-        // // float* host_timestep = new float[N]();
-        // // cudaMemcpy(host_state, state, N * sizeof(float), cudaMemcpyDeviceToHost);
-        // cudaMemcpy(host_X, dev_concentration, N * sizeof(float), cudaMemcpyDeviceToHost);
-        // // cudaMemcpy(host_timestep, dev_timestep, N * sizeof(float), cudaMemcpyDeviceToHost);
-        // float* host_accu_time = new float[N]();
-        // cudaMemcpy(host_accu_time, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
-
-        // cudaCallResampleKernel(blocks, threadsPerBlock, dev_resample_X, dev_concentration, dev_accu_time, N, T);
-        
-        // std::vector<float> v_X(std::begin(host_X), std::end(host_X)); // c++ 11
-        // std::vector<float> v_accu_time(std::begin(host_accu_time), std::end(host_accu_time));
-
-        // vector_X.push_back(v_X);
-        // vector_accu_time.push_back(v_accu_time);
 
         // run a reduction kernel to find the minimum accumulate time       
         cudaCallFindMinKernel(blocks, threadsPerBlock, dev_accu_time, dev_min_time, N);
@@ -170,7 +142,7 @@ int main (int argc, char** argv) {
             cerr << "Error " << cudaGetErrorString(err) << endl;
             // break;
         } else {
-            cerr << "resemple No kernel error detected" << endl;
+            cerr << "findmin No kernel error detected" << endl;
         }
         gpuErrchk(cudaMemcpy(host_min_time, dev_min_time, 1 * sizeof(float), cudaMemcpyDeviceToHost));
 
@@ -184,12 +156,21 @@ int main (int argc, char** argv) {
 
         printf("min get ");
         printf("this min: %f\n", *host_min_time);
+
+
+
+
+        cudaCallResampleKernel(blocks, threadsPerBlock, dev_resample_X, dev_concentration,dev_accu_time, N, T);
+        err = cudaGetLastError();
+        if  (cudaSuccess != err){
+            cerr << "Error " << cudaGetErrorString(err) << endl;
+            // break;
+        } else {
+            cerr << "resemple No kernel error detected" << endl;
+        }
         // getchar();
     }
     free(test);
-    // for (int i = 0; i < N; ++i) {
-    //     printf("%f\n", test_accu[i]);
-    // }
     free(test_accu);
 
     cudaMemcpy(resamp_X, dev_resample_X, N * T * sizeof(float), cudaMemcpyDeviceToHost);

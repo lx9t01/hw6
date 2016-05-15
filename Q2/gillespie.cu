@@ -124,7 +124,7 @@ void cudaResampleKernel(
     // TODO
     unsigned int idx = threadIdx.x + blockIdx.x * blockDim.x;
     while (idx < N) {
-        int i = floorf(dev_accu_time[idx] * 10);
+        int i = (int)(dev_accu_time[idx] * 10);
         for (int j = 0; j < i && j < T; ++j) {
             if (dev_resample_X[idx * T + j] < 0) {
                 dev_resample_X[idx * T + j] = dev_X[idx];
