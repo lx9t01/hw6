@@ -105,7 +105,11 @@ int main (int argc, char** argv) {
     curandSetPseudoRandomGeneratorSeed(gen, 1234);
     cudaError err; 
 
-    float* test = (float*)malloc(N * sizeof(float));
+    float* test = (float*)malloc(N * T * sizeof(float));
+    cudaMemcpy(test, dev_resample_X, N * T * sizeof(float));
+    for (int i = 0; i < N * T; ++i) {
+        printf("%f ", test[i]);
+    }
     float* test_accu = (float*)malloc(N * sizeof(float));
     
     while (*host_min_time <= final_time) {
@@ -156,7 +160,7 @@ int main (int argc, char** argv) {
 
         printf("min get ");
         printf("this min: %f\n", *host_min_time);
-        
+
         cudaCallResampleKernel(blocks, threadsPerBlock, dev_resample_X, dev_concentration,dev_accu_time, N, T);
         err = cudaGetLastError();
         if  (cudaSuccess != err){
@@ -165,7 +169,7 @@ int main (int argc, char** argv) {
         } else {
             cerr << "resemple No kernel error detected" << endl;
         }
-        // getchar();
+        getchar();
     }
     free(test);
     free(test_accu);
