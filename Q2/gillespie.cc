@@ -197,6 +197,8 @@ int main (int argc, char** argv) {
     float* dev_var;
     cudaMalloc((void**)&dev_mean, T * sizeof(float));
     cudaMalloc((void**)&dev_var, T * sizeof(float));
+    cudaMemset(dev_mean, 0, T * sizeof(float));
+    cudaMemset(dev_var, 0, T * sizeof(float));
 
     float* host_mean = (float*)malloc(T * sizeof(float));
     float* host_var = (float*)malloc(T * sizeof(float));
