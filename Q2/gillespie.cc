@@ -245,11 +245,11 @@ int main (int argc, char** argv) {
     float* mean = new float[T]();
     for (int i = 0; i < T; ++i) {
         for (int j = 0; j < N; ++j) {
-            mean[i] += resamp_X[j * T + i];
+            mean[i] += resamp_X[i * N + j];
         }
         mean[i] /= N;
     }
-    
+
     FILE *outputFile = fopen("output_mean_CPU.txt", "w");
     for (int i = 0; i < T; ++i) {
         fprintf(outputFile, "%f ",mean[i]);
