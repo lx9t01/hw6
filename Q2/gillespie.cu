@@ -125,7 +125,7 @@ void cudaResampleKernel(
     unsigned int idx = threadIdx.x + blockIdx.x * blockDim.x;
     while (idx < N) {
         int i = (int)(dev_accu_time[idx] * 10);
-        printf("inside resample kernel, idx: %d, i: %d\n", idx, i);
+        printf("idx: %d, N: %d, i: %d, dev_ac: %f\n", idx, N, i, dev_accu_time[idx]);
         for (int j = 0; j < i && j < T; ++j) {
             // printf("j: %d , T: %d , i: %d , idx: %d , dex_X: %f , dev_resample: %f\n", j, T, i, idx, dev_X[idx], dev_resample_X[idx]);
             if (dev_resample_X[idx + N * j] == 0) {
