@@ -161,7 +161,7 @@ int main (int argc, char** argv) {
         //     }
         // }
         // *host_min_time = new_min;
-        // cudaMemcpy(test, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
+        cudaMemcpy(test, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
         float new_max = -1;
         for (int i = 0; i < N; ++i) {
             if (test[i] > new_max) {
