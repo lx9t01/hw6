@@ -98,7 +98,7 @@ int main (int argc, char** argv) {
 
     float* dev_resample_X;
     cudaMalloc((void**)&dev_resample_X, N * T * sizeof(float));
-    cudaMemset(dev_resample_X, -1.0, N * T * sizeof(float));
+    cudaMemset(dev_resample_X, 0.000, N * T * sizeof(float));
     // the matrix to mark if a time point has been ipdated
 
     const float final_time = 100;
