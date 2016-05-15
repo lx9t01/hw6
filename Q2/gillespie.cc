@@ -117,8 +117,8 @@ int main (int argc, char** argv) {
     cudaMemcpy(test, dev_concentration, N * sizeof(float), cudaMemcpyDeviceToHost);
     printf("before kernel, X: %f\n", test[0]);
     while (*host_min_time <= final_time) {
-        curandGenerateUniform(gen, dev_points, N * sizeof(float));
-        curandGenerateUniform(gen, dev_points_2, N * sizeof(float));
+        curandGenerateUniform(gen, dev_points, N);
+        curandGenerateUniform(gen, dev_points_2, N);
         err = cudaGetLastError();
         if  (cudaSuccess != err){
             cerr << "Error " << cudaGetErrorString(err) << endl;
