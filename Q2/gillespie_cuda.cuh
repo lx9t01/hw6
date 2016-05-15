@@ -28,6 +28,15 @@ void cudaCallResampleKernel(const int blocks,
     const int N, 
     const int T);
 
+void cudaCallMeanVarKernel(const int blocks,
+    const int threadsPerBlock, 
+    float* dev_resample_X,
+    float* dev_mean,
+    float* dev_var,
+    const int N,
+    const int T
+    );
+
 
 
 #endif

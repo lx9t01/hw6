@@ -143,6 +143,27 @@ void cudaResampleKernel(
     }
 }
 
+__global__ 
+void cudaMeanVarKernel(float* dev_resample_X,
+    float* dev_mean,
+    float* dev_var,
+    const int N,
+    const int T
+    ) {
+    unsigned int idx = threadIdx.x + blockDim.x * blockIdx.x;
+    while (idx < T) {
+        for (int i = 0; i < N; ++i) {
+            dev_mean[idx] += dev_resample_X[i * T + idx];
+            dev_var[idx] += dev_resample_X[i * T + idx] * dev_resample_X[i * T + idx];
+        }
+        __syncthreads();
+        dev_mean[idx] /= N;
+        dev_var[idx] = dev_var[idx] / N - (dev_mean[idx] * dev_mean[idx]);
+        idx += blockDIm.x * gridDim.x;
+    }
+
+}
+
 
 
 
@@ -176,6 +197,18 @@ void cudaCallResampleKernel(const int blocks,
     const int N, 
     const int T) {
     cudaResampleKernel<<<blocks, threadsPerBlock>>>(dev_resample_X, dev_X, dev_accu_time, N, T);
+}
+
+void cudaCallMeanVarKernel(const int blocks,
+    const int threadsPerBlock, 
+    float* dev_resample_X,
+    float* dev_mean,
+    float* dev_var,
+    const int N,
+    const int T
+    ) {
+    cudaMeanVarKernel<<<blocks, threadsPerBlock>>>(dev_resample_X, dev_mean, dev_var, N, T);
+
 }
 
 

@@ -99,7 +99,6 @@ int main (int argc, char** argv) {
     float* dev_resample_X;
     cudaMalloc((void**)&dev_resample_X, N * T * sizeof(float));
     cudaMemset(dev_resample_X, 0.000, N * T * sizeof(float));
-    // the matrix to mark if a time point has been ipdated
 
     const float final_time = 100;
     curandSetPseudoRandomGeneratorSeed(gen, 1234);
@@ -186,19 +185,53 @@ int main (int argc, char** argv) {
     //     }
     //     printf("\n");
     // }
+    float* dev_mean;
+    float* dev_var;
+    cudaMalloc((void**)&dev_mean, T * sizeof(float));
+    cudaMalloc((void**)&dev_var, T * sizeof(float));
+
+    float* host_mean = (float*)malloc(T * sizeof(float));
+    float* host_var = (float*)malloc(T * sizeof(float));
+
+    cudaCallMeanVarKernel(blocks, threadsPerBlock, dev_resample_X, dev_mean, dev_var, N, T);
+    err = cudaGetLastError();
+    if  (cudaSuccess != err){
+        cerr << "Error " << cudaGetErrorString(err) << endl;
+            // break;
+    } else {
+        cerr << "resemple No kernel error detected" << endl;
+    }
+    cudaMemcpy(host_mean, dev_mean, T * sizeof(float), cudaMemcpyDeviceToHost);
+    cudaMemcpy(host_var, dev_var, T * sizeof(float), cudaMemcpyDeviceToHost);
+
+
+    FILE *gpumin = fopen("GPU_mean.txt", "w");
+    for (int i = 0; i < T; ++i) {
+        {
+            fprintf(gpumin, "%f ", host_mean[i]);
+        }
+    }
+    fclose(gpumin);
+
+    FILE *gpuvar = fopen("GPU_var.txt", "w");
+    for (int i = 0; i < T; ++i) {
+        {
+            fprintf(gpuvar, "%f ", host_var[i]);
+        }
+    }
+    fclose(gpuvar);
+
 
 
     FILE *total_resample_file = fopen("resample.txt", "w");
-
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < T; ++j) {
             fprintf(total_resample_file, "%f ", resamp_X[i * T + j]);
         }
         fprintf(total_resample_file, "\n");
     }
-
-
     fclose(total_resample_file);
+
 
     // find the mean and var
     float* mean = new float[T]();
@@ -213,7 +246,7 @@ int main (int argc, char** argv) {
 
 
 
-    FILE *outputFile = fopen("output.txt", "w");
+    FILE *outputFile = fopen("output_mean_CPU.txt", "w");
     for (int i = 0; i < T; ++i) {
         fprintf(outputFile, "%f ",mean[i]);
     }
@@ -230,6 +263,11 @@ int main (int argc, char** argv) {
     cudaFree(dev_accu_time);
     cudaFree(dev_min_time);
     free(resamp_X);
+
+    cudaFree(dev_mean);
+    cudaFree(dev_var);
+    free(host_mean);
+    free(host_var);
 
 
     return EXIT_SUCCESS;
