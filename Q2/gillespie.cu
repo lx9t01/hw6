@@ -128,6 +128,8 @@ void cudaResampleKernel(
         for (int j = 0; j < i && j < T; ++j) {
             if (dev_resample_X[idx * T + j] < 0) {
                 dev_resample_X[idx * T + j] = dev_X[idx];
+                printf("%d %d, %f\n",idx, j, dev_X[idx]);
+
             }
         }
         // while (dev_is_resampled[idx * T + i] == 0 && i >= 0 && i < T) {
