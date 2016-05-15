@@ -104,7 +104,7 @@ int main (int argc, char** argv) {
     curandSetPseudoRandomGeneratorSeed(gen, 1234ULL);
     cudaError err; 
 
-    float* test = (float*)malloc(N * T * sizeof(float));
+    float* test = (float*)malloc(N * sizeof(float));
     // cudaMemcpy(test, dev_resample_X, N * T * sizeof(float), cudaMemcpyDeviceToHost);
     // for (int i = 0; i < N * T; ++i) {
     //     printf("%f ", test[i]);
@@ -161,10 +161,11 @@ int main (int argc, char** argv) {
         //     }
         // }
         // *host_min_time = new_min;
+        cudaMemcpy(test, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
         float new_max = -1;
         for (int i = 0; i < N; ++i) {
-            if (test_accu[i] > new_max) {
-                new_max = test_accu[i];
+            if (test[i] > new_max) {
+                new_max = test[i];
             }
         }
         printf("max get this max: %f \n", new_max);
