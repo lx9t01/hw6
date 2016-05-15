@@ -106,10 +106,10 @@ int main (int argc, char** argv) {
     cudaError err; 
 
     float* test = (float*)malloc(N * T * sizeof(float));
-    cudaMemcpy(test, dev_resample_X, N * T * sizeof(float), cudaMemcpyDeviceToHost);
-    for (int i = 0; i < N * T; ++i) {
-        printf("%f ", test[i]);
-    }
+    // cudaMemcpy(test, dev_resample_X, N * T * sizeof(float), cudaMemcpyDeviceToHost);
+    // for (int i = 0; i < N * T; ++i) {
+    //     printf("%f ", test[i]);
+    // }
     float* test_accu = (float*)malloc(N * sizeof(float));
     
     while (*host_min_time <= final_time) {
@@ -169,7 +169,7 @@ int main (int argc, char** argv) {
         } else {
             cerr << "resemple No kernel error detected" << endl;
         }
-        getchar();
+        // getchar();
     }
     free(test);
     free(test_accu);
