@@ -135,9 +135,14 @@ int main (int argc, char** argv) {
         }
         // cudaMemcpy(test, dev_concentration, N * sizeof(float), cudaMemcpyDeviceToHost);
         
-        // cudaMemcpy(test_accu, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
+        cudaMemcpy(test_accu, dev_concentration, N * sizeof(float), cudaMemcpyDeviceToHost);
+        float sum = 0;
+        for (int i = 0; i < N; ++i) {
+            sum += test_accu[i];
+        }
+        sum /= N;
 
-        // printf("after kernel, X: %f\n", test[0]);
+        printf("after kernel, avg X: %f\n", sum);
 
         // run a reduction kernel to find the minimum accumulate time       
         cudaCallFindMinKernel(blocks, threadsPerBlock, dev_accu_time, dev_min_time, N);
