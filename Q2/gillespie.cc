@@ -184,7 +184,7 @@ int main (int argc, char** argv) {
 
         printf("min get ");
         printf("this min: %f\n", *host_min_time);
-        getchar();
+        // getchar();
     }
     free(test);
     // for (int i = 0; i < N; ++i) {
