@@ -163,8 +163,8 @@ int main (int argc, char** argv) {
         // *host_min_time = new_min;
         float new_max = -1;
         for (int i = 0; i < N; ++i) {
-            if (test_accu[i] > new_min) {
-                new_min = test_accu[i];
+            if (test_accu[i] > new_max) {
+                new_max = test_accu[i];
             }
         }
         printf("max get this max: %f \n", new_max);
