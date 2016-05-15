@@ -173,7 +173,7 @@ int main (int argc, char** argv) {
         } else {
             cerr << "resemple No kernel error detected" << endl;
         }
-        // getchar();
+        getchar();
     }
     free(test);
     free(test_accu);
