@@ -52,27 +52,25 @@ void cudaGillKernel(float* dev_points,
     while (idx < N) {
 
         if (state[idx] < 0.5){
-            float lamda = kon + X[idx] * g;
-            dev_timestep[idx] = -logf(dev_points[idx]) / lamda;
+            dev_timestep[idx] = -logf(dev_points[idx]) / (kon + X[idx] * g));
             dev_accu_time[idx] += dev_timestep[idx];
-            if (dev_points_2[idx] > kon / lamda) { // if X--
+            if (dev_points_2[idx] > kon / (kon + X[idx] * g)) { // if X--
                 X[idx]--;
             } else { // if OFF --> ON
                 state[idx] = 1;
             }
         } else {
-            float lamda = koff + b + X[idx] * g;
-            dev_timestep[idx] = -logf(dev_points[idx]) / lamda;
+            dev_timestep[idx] = -logf(dev_points[idx]) / (koff + b + X[idx] * g);
             dev_accu_time[idx] += dev_timestep[idx];
-            if (dev_points_2[idx] <= koff / lamda) { // ON --> OFF
+            if (dev_points_2[idx] <= koff / (koff + b + X[idx] * g)) { // ON --> OFF
                 state[idx] = 0;
-            } else if (dev_points_2[idx] <= (koff + b) / lamda) { // X++
+            } else if (dev_points_2[idx] <= (koff + b) / (koff + b + X[idx] * g)) { // X++
                 X[idx]++;
             } else { // X--
                 X[idx]--;
             }
         }
-        __syncthreads();
+        // __syncthreads();
         idx += blockDim.x * gridDim.x;
     }
 }
