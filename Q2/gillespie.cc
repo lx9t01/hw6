@@ -101,7 +101,7 @@ int main (int argc, char** argv) {
     cudaMemset(dev_resample_X, 0.000, N * T * sizeof(float));
 
     const float final_time = 100;
-    curandSetPseudoRandomGeneratorSeed(gen, 1234);
+    curandSetPseudoRandomGeneratorSeed(gen, 1234ULL);
     cudaError err; 
 
     float* test = (float*)malloc(N * T * sizeof(float));
