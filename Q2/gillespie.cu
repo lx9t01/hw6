@@ -159,7 +159,7 @@ void cudaMeanVarKernel(float* dev_resample_X,
         __syncthreads();
         dev_mean[idx] /= N;
         dev_var[idx] = dev_var[idx] / N - (dev_mean[idx] * dev_mean[idx]);
-        idx += blockDIm.x * gridDim.x;
+        idx += blockDim.x * gridDim.x;
     }
 
 }
