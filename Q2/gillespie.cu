@@ -128,8 +128,8 @@ void cudaResampleKernel(
         // printf("inside resample kernel, idx: %d, i: %d\n", idx, i);
         for (int j = 0; j < i && j < T; ++j) {
             // printf("j: %d , T: %d , i: %d , idx: %d , dex_X: %f , dev_resample: %f\n", j, T, i, idx, dev_X[idx], dev_resample_X[idx]);
-            if (dev_resample_X[idx * T + j] == 0) {
-                dev_resample_X[idx * T + j] = dev_X[idx];
+            if (dev_resample_X[idx + N * j] == 0) {
+                dev_resample_X[idx + N * j] = dev_X[idx];
                 // printf("%d %d, %f\n",idx, j, dev_X[idx]);
 
             }
@@ -153,8 +153,8 @@ void cudaMeanVarKernel(float* dev_resample_X,
     unsigned int idx = threadIdx.x + blockDim.x * blockIdx.x;
     while (idx < T) {
         for (int i = 0; i < N; ++i) {
-            dev_mean[idx] += dev_resample_X[i * T + idx];
-            dev_var[idx] += dev_resample_X[i * T + idx] * dev_resample_X[i * T + idx];
+            dev_mean[idx] += dev_resample_X[idx * N + i];
+            dev_var[idx] += dev_resample_X[idx * N + i] * dev_resample_X[idx * N + i];
         }
         __syncthreads();
         dev_mean[idx] /= N;
