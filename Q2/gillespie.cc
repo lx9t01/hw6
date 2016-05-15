@@ -129,11 +129,11 @@ int main (int argc, char** argv) {
         } else {
             cerr << "gill No kernel error detected" << endl;
         }
-        cudaMemcpy(test, dev_concentration, N * sizeof(float), cudaMemcpyDeviceToHost);
+        // cudaMemcpy(test, dev_concentration, N * sizeof(float), cudaMemcpyDeviceToHost);
         
-        cudaMemcpy(test_accu, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
+        // cudaMemcpy(test_accu, dev_accu_time, N * sizeof(float), cudaMemcpyDeviceToHost);
 
-        printf("after kernel, X: %f\n", test[0]);
+        // printf("after kernel, X: %f\n", test[0]);
 
         // run a reduction kernel to find the minimum accumulate time       
         cudaCallFindMinKernel(blocks, threadsPerBlock, dev_accu_time, dev_min_time, N);
@@ -156,10 +156,7 @@ int main (int argc, char** argv) {
 
         printf("min get ");
         printf("this min: %f\n", *host_min_time);
-
-
-
-
+        
         cudaCallResampleKernel(blocks, threadsPerBlock, dev_resample_X, dev_concentration,dev_accu_time, N, T);
         err = cudaGetLastError();
         if  (cudaSuccess != err){
@@ -174,6 +171,14 @@ int main (int argc, char** argv) {
     free(test_accu);
 
     cudaMemcpy(resamp_X, dev_resample_X, N * T * sizeof(float), cudaMemcpyDeviceToHost);
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < T; ++j) {
+            printf("%f ", resamp_X[i * T + j]);
+        }
+        printf("\n");
+    }
+
+
     FILE *total_resample_file = fopen("resample.txt", "w");
 
     for (int i = 0; i < N; ++i) {
